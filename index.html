@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Trainer Trigonometrie</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: Levelspiel unter dem Nachthimmel. Startseite = Level-Pfad, Spielfeld = weiße Aufgabenkarte, Sterne fliegen zum Zähler oben */
+:root{
+  color-scheme:dark;
+  --nacht1:#0b1438; --nacht2:#16245c; --nacht3:#1d2f6b;
+  --text:#ffffff; --leise:#aab6e8; --glas:rgba(255,255,255,.08); --glasrand:rgba(255,255,255,.2);
+  --gold:#ffd54a; --goldd:#f29a00; --gruen:#00a97e; --gruend:#00694e;
+  --karte:#ffffff; --tinte:#111111; --ok:#1b7a3e; --okbg:#e3f5e9; --err:#b3261e; --errbg:#fdecea;
+  --font:Arial,"Liberation Sans",Helvetica,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--nacht1)}
+body{margin:0;min-height:100vh;color:var(--text);font-family:var(--font);font-size:18px;line-height:1.45;
+  background:radial-gradient(1100px 560px at 85% -10%,#3b4fa8 0%,transparent 60%),linear-gradient(180deg,var(--nacht1) 0%,var(--nacht2) 55%,var(--nacht3) 100%);background-attachment:fixed;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px}
+#himmel{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.schule{font-size:.75rem;letter-spacing:.14em;color:var(--leise)}
+h1{margin:2px 0 0;font-size:clamp(1.7rem,4.5vw,2.5rem);line-height:1.1}
+h1 span{color:var(--gold)}
+.zaehler{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 16px;font-weight:700;font-size:1.2rem;font-variant-numeric:tabular-nums;transition:transform .25s}
+.zaehler svg{width:28px;height:28px}
+.zaehlwerk{display:flex;gap:10px;flex-wrap:wrap}
+.bonus{display:inline-flex;align-items:center;gap:3px;font-size:.85rem;font-weight:700;color:#1b2559;background:#ffe98a;border-radius:999px;padding:2px 9px}
+.topf{display:flex;align-items:center;gap:6px;justify-content:center;color:#1b2559;font-size:.95rem}
+.topf i{width:16px;height:16px;border-radius:50%;border:2px solid #f2a900;display:inline-block}
+.topf i.voll{background:#ffd23f}
+.topf svg{width:30px;height:30px}
+.mflug{position:fixed;left:50%;top:45%;width:200px;height:200px;margin:-100px 0 0 -100px;z-index:50;pointer-events:none;perspective:600px}
+.mflug svg{width:100%;height:100%;filter:drop-shadow(0 0 22px rgba(255,213,74,.9))}
+.zaehler.puls{transform:scale(1.25);box-shadow:0 0 30px rgba(255,213,74,.7)}
+.sub{color:#cdd6ff;margin:0}
+#app{display:flex;flex-direction:column;gap:18px}
+/* Level-Pfad */
+.levels{position:relative;display:flex;flex-direction:column;gap:20px;padding-left:66px}
+.levels:before{content:"";position:absolute;left:28px;top:36px;bottom:36px;border-left:4px dashed rgba(255,255,255,.25)}
+.lv{position:relative;border-radius:20px;padding:16px 20px;background:var(--glas);border:1.5px solid var(--glasrand)}
+.lv .badge{position:absolute;left:-66px;top:14px;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.5rem;background:#2a3a7a;border:3px solid rgba(255,255,255,.35)}
+.lv.aktiv{background:linear-gradient(135deg,rgba(255,213,74,.16),rgba(0,169,126,.14));border:2px solid var(--gold);box-shadow:0 0 40px rgba(255,213,74,.22)}
+.lv.aktiv .badge{background:var(--gold);color:#1b2559;border-color:#fff}
+.lv.zu{opacity:.62}
+.lvkopf{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tag{font-size:.8rem;letter-spacing:.18em;color:var(--gold);font-weight:700}
+.lvkopf h2{margin:2px 0 0;font-size:1.45rem;text-wrap:balance}
+.lv.zu h2{color:#c6cdee}
+.klein{font-size:.85rem;color:var(--leise)}
+.zahl{display:flex;align-items:center;gap:6px;color:#e6ebff;font-size:.95rem}
+.zahl svg{width:20px;height:20px}
+.bahn{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+.bahn .linie{position:absolute;left:12.5%;right:12.5%;top:41px;height:6px;border-radius:3px;background:rgba(255,255,255,.2)}
+.bahn .linie i{display:block;height:100%;border-radius:3px;background:var(--gold)}
+.node{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;min-width:0}
+.kreis{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;font-weight:800;background:#24346f;border:4px solid rgba(255,255,255,.3);color:#fff;padding:0;cursor:pointer}
+.node.fertig .kreis{background:radial-gradient(circle at 35% 30%,#ffe98a,#f5b400);color:#5a3b00;border-color:#fff3c4}
+.node.jetzt .kreis{background:#fff;color:#1b2559;border-color:var(--gold);box-shadow:0 0 0 8px rgba(255,213,74,.25),0 0 30px rgba(255,213,74,.7);animation:puls 2s ease-in-out infinite}
+.node.zu .kreis{background:#1b2652;color:#6f7bb0;cursor:not-allowed}
+@keyframes puls{50%{box-shadow:0 0 0 14px rgba(255,213,74,.12),0 0 40px rgba(255,213,74,.9)}}
+.node b{font-size:1rem}
+.sterne{display:flex;gap:3px}
+.sterne svg{width:28px;height:28px}
+.btn{font:inherit;cursor:pointer;border:0;background:var(--gruen);color:#fff;font-weight:800;font-size:1rem;border-radius:999px;padding:9px 22px;box-shadow:0 5px 0 var(--gruend);touch-action:manipulation}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--gruend)}
+.btn.hell{background:rgba(255,255,255,.14);box-shadow:0 5px 0 rgba(0,0,0,.35)}
+.btn.gold{background:var(--gold);color:#1b2559;box-shadow:0 5px 0 #b88a00}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.boss{background:linear-gradient(135deg,rgba(220,60,60,.22),rgba(255,213,74,.10));border:1.5px dashed rgba(255,120,120,.7)}
+.boss .badge{background:#7a1f2b}
+.boss.aktiv{border:2px solid #ff7a7a;box-shadow:0 0 40px rgba(255,90,90,.3)}
+.boss.aktiv .badge{background:#d23a3a;color:#fff}
+.bossrow{display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap}
+details{border:1.5px dashed var(--glasrand);border-radius:12px;padding:8px 14px;color:var(--leise)}
+summary{cursor:pointer}
+.lehrer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+input[type=text]{font:inherit;border:2px solid var(--glasrand);background:rgba(0,0,0,.25);color:#fff;border-radius:10px;padding:8px 12px;width:12em;max-width:100%}
+.msg{font-size:.9rem}
+/* Spielfeld */
+.bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.bar .titel{font-weight:700}
+.bar .titel small{display:block;font-weight:400;color:var(--leise);font-size:.85rem}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.35)}
+.dot.ok{background:#3fd08a;border-color:#3fd08a} .dot.err{background:#ff6b6b;border-color:#ff6b6b} .dot.now{border-color:var(--gold);box-shadow:0 0 10px var(--gold)}
+.card{position:relative;background:var(--karte);color:var(--tinte);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.frage{font-size:1.3rem;font-weight:700;margin:0}
+.fig{display:flex;justify-content:center}
+.fig svg{width:100%;max-width:460px;height:auto}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.opts button{font:inherit;cursor:pointer;padding:14px 10px;font-size:1.1rem;font-weight:700;border:2.5px solid #1b2559;border-radius:14px;background:#fff;color:#1b2559;box-shadow:0 4px 0 #1b2559;touch-action:manipulation}
+.opts button:disabled{cursor:default}
+.opts button.richtig{background:var(--okbg);border-color:var(--ok);color:var(--ok);box-shadow:0 4px 0 var(--ok)}
+.opts button.falsch{background:var(--errbg);border-color:var(--err);color:var(--err);box-shadow:0 4px 0 var(--err)}
+.num{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:1.2rem}
+.num input{font:inherit;font-size:1.3rem;width:6em;text-align:center;border:2.5px solid #1b2559;border-radius:12px;padding:8px;color:#111;background:#fff}
+.fb{padding:12px 16px;font-weight:700;border-radius:12px}
+.fb.ok{background:var(--okbg);color:var(--ok)} .fb.err{background:var(--errbg);color:var(--err)}
+.fb span{display:block;font-weight:400;color:var(--tinte);margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.ende{align-items:center;text-align:center}
+.ende .gross{display:flex;gap:10px}
+.ende .gross svg{width:64px;height:64px}
+.ende .frage{color:#1b2559}
+/* Sternflug */
+.flug{position:fixed;left:50%;top:45%;width:170px;height:170px;margin:-85px 0 0 -85px;z-index:50;pointer-events:none;filter:drop-shadow(0 0 25px rgba(255,213,74,.9))}
+.glitzer{position:fixed;z-index:49;width:10px;height:10px;border-radius:50%;background:#fff3b0;pointer-events:none;box-shadow:0 0 12px #ffd54a}
+.banner{background:linear-gradient(90deg,var(--gold),#ffe98a);color:#1b2559;font-weight:800;border-radius:14px;padding:10px 16px;text-align:center}
+.fuss{text-align:right;color:var(--leise);font-size:.82rem;font-style:italic;margin:6px 0 0}
+@media (max-width:640px){
+  .bahn{grid-template-columns:repeat(2,minmax(0,1fr))}.bahn .linie{display:none}
+  .levels{padding-left:0}.levels:before{display:none}.lv .badge{position:static;width:44px;height:44px;font-size:1.1rem;margin-bottom:8px}
+  .kreis{width:72px;height:72px;font-size:1.3rem}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<svg id="himmel" aria-hidden="true"></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".45" stop-color="#ffd23f"/><stop offset="1" stop-color="#f29a00"/></linearGradient>
+<symbol id="taler" viewBox="0 0 300 300">
+<circle cx="150" cy="150" r="128" fill="#f2a900" stroke="#3a2200" stroke-width="7"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(266.0 150.0) rotate(0)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(262.0 180.0) rotate(15)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(250.5 208.0) rotate(30)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(232.0 232.0) rotate(45)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(208.0 250.5) rotate(60)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(180.0 262.0) rotate(75)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(150.0 266.0) rotate(90)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(120.0 262.0) rotate(105)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(92.0 250.5) rotate(120)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(68.0 232.0) rotate(135)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(49.5 208.0) rotate(150)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(38.0 180.0) rotate(165)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(34.0 150.0) rotate(180)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(38.0 120.0) rotate(195)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(49.5 92.0) rotate(210)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(68.0 68.0) rotate(225)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(92.0 49.5) rotate(240)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(120.0 38.0) rotate(255)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(150.0 34.0) rotate(270)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(180.0 38.0) rotate(285)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(208.0 49.5) rotate(300)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(232.0 68.0) rotate(315)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(250.5 92.0) rotate(330)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/><rect x="-5" y="-8" width="10" height="16" rx="3" transform="translate(262.0 120.0) rotate(345)" fill="#ffd84d" stroke="#3a2200" stroke-width="2.5"/>
+<circle cx="150" cy="150" r="104" fill="#ffd23f" stroke="#3a2200" stroke-width="5"/>
+<path d="M226 78 A104 104 0 0 1 78 226 A120 120 0 0 0 226 78Z" fill="#f0a800" opacity=".9"/>
+<path d="M78 96 A92 92 0 0 1 132 58" fill="none" stroke="#fff6c8" stroke-width="9" stroke-linecap="round"/>
+<path d="M66 124 A92 92 0 0 1 70 112" fill="none" stroke="#fff6c8" stroke-width="9" stroke-linecap="round"/>
+<g stroke="#3a2200" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<line x1="150" y1="168" x2="112" y2="232"/><line x1="150" y1="168" x2="188" y2="232"/><line x1="150" y1="168" x2="150" y2="236"/>
+<g transform="rotate(-32 150 160)"><rect x="84" y="142" width="120" height="34" rx="6" fill="#c98500"/><rect x="196" y="134" width="30" height="50" rx="6" fill="#e39a00"/><rect x="70" y="148" width="18" height="22" rx="4" fill="#e39a00"/><line x1="120" y1="150" x2="168" y2="150" stroke="#ffe680" stroke-width="5"/></g></g>
+<path d="M0 -16 L4.6 -5 L16 -4.6 L7 3 L10 15 L0 8.6 L-10 15 L-7 3 L-16 -4.6 L-4.6 -5Z" transform="translate(208 86) scale(1.5)" fill="#fff3a8" stroke="#3a2200" stroke-width="3"/>
+<path d="M0 -14 Q2 -2 14 0 Q2 2 0 14 Q-2 2 -14 0 Q-2 -2 0 -14Z" fill="#fff" transform="translate(236 128) scale(.6)"/>
+</symbol>
+  <symbol id="st" viewBox="0 0 24 24"><path d="M12 2.6l2.75 5.9 6.45.75-4.8 4.4 1.3 6.35L12 16.8 6.3 20l1.3-6.35-4.8-4.4 6.45-.75z" stroke-linejoin="round"/></symbol>
+</defs></svg>
+<div class="wrap">
+  <div class="top">
+    <div><div class="schule">EMIL-PETRI-SCHULE ARNSTADT · MATHEMATIK KLASSE 10</div><h1>Trainer <span>Trigonometrie</span></h1></div>
+    <div class="zaehlwerk"><div class="zaehler" id="zaehler" aria-label="Gesammelte Sterne"><svg><use href="#st" fill="url(#gold)" stroke="#b86e00" stroke-width="1.2"/></svg><span id="zahl">0</span></div>
+    <div class="zaehler" id="muenzer" aria-label="Sternwarten-Taler"><svg viewBox="0 0 300 300"><use href="#taler"/></svg><span id="mzahl">0</span></div></div>
+  </div>
+  <main id="app"></main>
+  <p class="fuss">Erstellt von Marion Klugmann (November 2026) mit freundlicher Unterstützung von Claude.</p>
+</div>
+
+<script>
+(function(){
+/* ================= Daten ================= */
+const KEY="trainer-trigonometrie-v1", CODE="EPS2026", RUNDE=10, FEHLER_ERLAUBT=1;
+const LEVELS=[
+  {nr:1,name:"Winkel und Dreiecke",spiele:[
+    {id:"1a",nr:"1-1",name:"Winkelarten",gen:g1a},
+    {id:"1b",nr:"1-2",name:"Dreiecke nach Seiten",gen:g1b},
+    {id:"1c",nr:"1-3",name:"Dreiecke nach Winkeln",gen:g1c},
+    {id:"1d",nr:"1-4",name:"Innenwinkelsumme",gen:g1d}]},
+  {nr:2,name:"Rechtwinkliges Dreieck und Pythagoras",spiele:null,info:"ab nächster Woche"},
+  {nr:3,name:"Sinus, Kosinus und Tangens",spiele:null,info:"kommt bald"},
+  {nr:4,name:"Sinussatz",spiele:null,info:"kommt bald"},
+  {nr:5,name:"Kosinussatz",spiele:null,info:"kommt bald"}];
+const ALLE=LEVELS.flatMap(l=>l.spiele||[]);
+const BONUS_PRO_MUENZE=5;
+let S={stars:{},bonus:{},topf:0,muenzen:0,lehrer:false};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+S.bonus=S.bonus||{};S.topf=S.topf||0;S.muenzen=S.muenzen||0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const stars=id=>S.stars[id]||0;
+function offen(sp){if(S.lehrer)return true;const i=ALLE.findIndex(t=>t.id===sp.id);return i===0||stars(ALLE[i-1].id)>=1;}
+const bossOffen=()=>S.lehrer||ALLE.every(t=>stars(t.id)>=1);
+const summe=()=>Object.values(S.stars).reduce((a,b)=>a+b,0);
+
+/* ================= Hilfen ================= */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const dez=x=>String(x).replace(".",",");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const KINDS=["spitzer Winkel","rechter Winkel","stumpfer Winkel","gestreckter Winkel","überstumpfer Winkel","Vollwinkel"];
+function kind(v){return v<90?0:v===90?1:v<180?2:v===180?3:v<360?4:5;}
+const RANGE=["kleiner als 90°","genau 90°","zwischen 90° und 180°","genau 180°","zwischen 180° und 360°","genau 360°"];
+
+/* ---------- Zeichnungen ---------- */
+function T(x,y,s,o={}){return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${o.size||17}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" fill="#111"${o.bold?' font-weight="700"':''}${o.it?' font-style="italic"':''}>${esc(s)}</text>`;}
+function angleSVG(deg,showVal){
+  const w=360,h=230, cx=deg<=180?150:180, cy=deg<=180?170:115, R=deg<=180?150:100;
+  const lab=deg+"°", tw=0.6*18*lab.length, half=Math.min(deg,180)*Math.PI/360;
+  let tR=deg>=180?44:Math.max(38,(tw/2+5)/Math.sin(half)); const r=Math.min(R-12,Math.max(62,tR+tw/2+10)); if(tR+tw/2>r)tR=r+tw/2+6;
+  const a=deg*Math.PI/180, ex=cx+r*Math.cos(a), ey=cy-r*Math.sin(a);
+  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Winkel">`;
+  s+= deg>=360?`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#e6e6e6" stroke="#111" stroke-width="1.5"/>`
+     :`<path d="M${cx} ${cy} L${cx+r} ${cy} A${r} ${r} 0 ${deg>180?1:0} 0 ${ex.toFixed(1)} ${ey.toFixed(1)} Z" fill="#e6e6e6" stroke="#111" stroke-width="1.5"/>`;
+  if(deg===90)s+=`<circle cx="${cx+12}" cy="${cy-12}" r="3.5" fill="#111"/>`;
+  s+=`<line x1="${cx}" y1="${cy}" x2="${cx+R}" y2="${cy}" stroke="#111" stroke-width="4" stroke-linecap="round"/>`;
+  if(deg<360)s+=`<line x1="${cx}" y1="${cy}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy-R*Math.sin(a)).toFixed(1)}" stroke="#111" stroke-width="4" stroke-linecap="round"/>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="4" fill="#111"/>`;
+  if(showVal){const m=deg>=360?Math.PI/4:a/2;s+=T(cx+tR*Math.cos(m),cy-tR*Math.sin(m),lab,{bold:true,size:18});}
+  return s+"</svg>";
+}
+function triFromSides(a,b,c){const A=Math.acos((b*b+c*c-a*a)/(2*b*c));return[[0,0],[c,0],[b*Math.cos(A),b*Math.sin(A)]];}
+function triFromAngles(al,be){const ga=180-al-be,r=Math.PI/180,b=Math.sin(be*r)/Math.sin(ga*r);return[[0,0],[1,0],[b*Math.cos(al*r),b*Math.sin(al*r)]];}
+const U=(x,y)=>{const l=Math.hypot(x,y)||1;return[x/l,y/l];};
+function interior(p,i){const o=[0,1,2].filter(j=>j!==i).map(j=>p[j]);const u=U(o[0][0]-p[i][0],o[0][1]-p[i][1]),v=U(o[1][0]-p[i][0],o[1][1]-p[i][1]);return Math.acos(Math.max(-1,Math.min(1,u[0]*v[0]+u[1]*v[1])))*180/Math.PI;}
+/* o: sides{a,b,c}, ticks[], angles{0,1,2}, right(index), vlabels */
+function triSVG(pts,o={}){
+  /* sehr kurze Grundseite: Dreieck so drehen, dass die längste Seite unten liegt (Umlaufsinn bleibt) */
+  const d2=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]), L=[[0,1],[1,2],[0,2]].map(([i,j])=>({i,j,l:d2(pts[i],pts[j])}));
+  const lmax=Math.max(...L.map(x=>x.l)), base=d2(pts[0],pts[1]);
+  if(base<0.6*lmax){const m=L.find(x=>x.l===lmax);
+    const rot=(p,c,a)=>[c[0]+(p[0]-c[0])*Math.cos(a)-(p[1]-c[1])*Math.sin(a),c[1]+(p[0]-c[0])*Math.sin(a)+(p[1]-c[1])*Math.cos(a)];
+    const k=[0,1,2].find(x=>x!==m.i&&x!==m.j);
+    let a=-Math.atan2(pts[m.j][1]-pts[m.i][1],pts[m.j][0]-pts[m.i][0]);
+    let np=pts.map(p=>rot(p,pts[m.i],a)); if(np[k][1]<np[m.i][1])np=np.map(p=>rot(p,np[m.i],Math.PI));
+    pts=np;}
+  const w=420,h=250,pad=42, xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const sc=Math.min((w-2*pad)/(Math.max(...xs)-Math.min(...xs)),(h-2*pad)/(Math.max(...ys)-Math.min(...ys)));
+  const ox=(w-sc*(Math.max(...xs)+Math.min(...xs)))/2, oy=(h+sc*(Math.max(...ys)+Math.min(...ys)))/2;
+  const P=pts.map(([x,y])=>[ox+sc*x,oy-sc*y]), G=[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
+  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Dreieck">`;
+  const show=new Set(Object.keys(o.angles||{}).map(Number)); if(o.right!=null)show.add(o.right);
+  for(const i of show){
+    const oo=[0,1,2].filter(j=>j!==i).map(j=>P[j]);
+    const u=U(oo[0][0]-P[i][0],oo[0][1]-P[i][1]), v=U(oo[1][0]-P[i][0],oo[1][1]-P[i][1]);
+    const lab=(o.angles||{})[i]||"", tw=0.6*16*Math.max(lab.length,1), half=interior(pts,i)*Math.PI/360;
+    const l1=Math.hypot(oo[0][0]-P[i][0],oo[0][1]-P[i][1]), l2=Math.hypot(oo[1][0]-P[i][0],oo[1][1]-P[i][1]);
+    let tR=Math.max(16,(tw/2+5)/Math.sin(half)); if(i===o.right&&lab)tR=Math.max(tR,tw/2+18);
+    const r=lab?Math.min(0.42*Math.min(l1,l2),Math.max(34,tR+tw/2+8)):26;
+    if(lab&&tR+tw/2>r)tR=r+tw/2+5;
+    const cr=u[0]*v[1]-u[1]*v[0];
+    s+=`<path d="M${P[i][0].toFixed(1)} ${P[i][1].toFixed(1)} L${(P[i][0]+r*u[0]).toFixed(1)} ${(P[i][1]+r*u[1]).toFixed(1)} A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${cr>0?1:0} ${(P[i][0]+r*v[0]).toFixed(1)} ${(P[i][1]+r*v[1]).toFixed(1)} Z" fill="#e6e6e6" stroke="#111" stroke-width="1.4"/>`;
+    const bi=U(u[0]+v[0],u[1]+v[1]);
+    if(i===o.right)s+=`<circle cx="${(P[i][0]+10*bi[0]).toFixed(1)}" cy="${(P[i][1]+10*bi[1]).toFixed(1)}" r="3" fill="#111"/>`;
+    if(lab)s+=T(P[i][0]+tR*bi[0],P[i][1]+tR*bi[1],lab,{bold:true,size:16});
+  }
+  s+=`<polygon points="${P.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")}" fill="none" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>`;
+  const SI={a:[1,2],b:[0,2],c:[0,1]};
+  for(const k in SI){const [i,j]=SI[k],M=[(P[i][0]+P[j][0])/2,(P[i][1]+P[j][1])/2],d=U(P[j][0]-P[i][0],P[j][1]-P[i][1]);let n=[-d[1],d[0]];
+    if((M[0]-G[0])*n[0]+(M[1]-G[1])*n[1]<0)n=[-n[0],-n[1]];
+    if((o.ticks||[]).includes(k))for(const off of[-5,5]){const c=[M[0]+off*d[0],M[1]+off*d[1]];s+=`<line x1="${(c[0]-9*n[0]).toFixed(1)}" y1="${(c[1]-9*n[1]).toFixed(1)}" x2="${(c[0]+9*n[0]).toFixed(1)}" y2="${(c[1]+9*n[1]).toFixed(1)}" stroke="#111" stroke-width="2.5"/>`;}
+    if(o.sides&&o.sides[k]){const t=o.sides[k],off=12+Math.abs(n[0])*t.length*5+Math.abs(n[1])*10;s+=T(M[0]+off*n[0],M[1]+off*n[1],t,{it:t.length===1,size:17});}
+  }
+  if(o.vlabels!==false)P.forEach((p,i)=>{const d=U(p[0]-G[0],p[1]-G[1]);s+=T(p[0]+18*d[0],p[1]+18*d[1],"ABC"[i],{bold:true,size:18});});
+  return s+"</svg>";
+}
+
+/* ================= Aufgaben ================= */
+/* jede Aufgabe: {q, svg, opts:[...], ans:Index} oder {q, svg, num:Zahl}; ex = Erklärung */
+function mc(q,svg,correct,wrongs,ex){const opts=shuffle([correct,...wrongs]);return{q,svg,opts,ans:opts.indexOf(correct),ex};}
+
+function wertZuArt(k,near){
+  if(k===1)return 90; if(k===3)return 180; if(k===5)return 360;
+  if(near){if(k===0)return pick([rnd(80,89),rnd(1,12)]); if(k===2)return pick([rnd(91,99),rnd(170,179)]); return pick([rnd(181,190),rnd(340,359)]);}
+  if(k===0)return rnd(15,80); if(k===2)return rnd(100,170); return rnd(195,340);
+}
+function g1a(lv){
+  if(lv===0){const k=rnd(0,5),v=wertZuArt(k,false);
+    return mc("Welche Winkelart ist das?",angleSVG(v,true),KINDS[k],shuffle(KINDS.filter((_,i)=>i!==k)).slice(0,3),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);}
+  if(lv===1||Math.random()<.5){const k=pick([0,0,2,2,4,4,1,3,5]),nah=[0,2,4].includes(k)&&Math.random()<.35,v=wertZuArt(k,nah);
+    const a=mc(`Ein Winkel ist ${v}° groß. Welche Winkelart ist das?`,null,KINDS[k],KINDS.filter((_,i)=>i!==k),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);a.grenz=nah;return a;}
+  const k=pick([0,2,4]),nah=Math.random()<.35,ziel=wertZuArt(k,nah);
+  const andere=shuffle([0,1,2,3,4,5].filter(i=>i!==k)).slice(0,3).map(i=>wertZuArt(i,false)+"°");
+  const a=mc(`Welcher Winkel ist ein ${KINDS[k]}?`,null,ziel+"°",andere,`${ziel}° ist ${RANGE[k]}.`);a.grenz=nah;a.kat=KINDS[k];return a;
+}
+const SEITE=["unregelmäßig","gleichschenklig","gleichseitig"];
+function seitenTripel(t,dezimal){
+  const f=dezimal?(()=>rnd(6,16)/2):(()=>rnd(3,9));
+  if(t===2){const x=f();return[x,x,x];}
+  if(t===1){let x,y;do{x=f();y=f();}while(y===x||y>=2*x);return shuffle([x,x,y]);}
+  let a,b,c;do{a=f();b=f();c=f();}while(a===b||b===c||a===c||a+b<=c||a+c<=b||b+c<=a);return[a,b,c];
+}
+function g1b(lv){
+  if(lv===2&&Math.random()<.5){
+    const art=rnd(0,2), pts=triFromAngles(rnd(50,70),rnd(50,70)), svg=triSVG(pts,{});
+    if(art===0){const e=rnd(0,2);return mc(`Welche Seite liegt der Ecke ${"ABC"[e]} gegenüber?`,svg,"abc"[e],["abc"[(e+1)%3],"abc"[(e+2)%3],"αβγ"[e]],`Die Seite ${"abc"[e]} liegt der Ecke ${"ABC"[e]} gegenüber.`);}
+    if(art===1){const e=rnd(0,2);return mc(`Welcher Winkel liegt bei der Ecke ${"ABC"[e]}?`,svg,"αβγ"[e],["αβγ"[(e+1)%3],"αβγ"[(e+2)%3],"abc"[e]],`Bei ${"ABC"[e]} liegt der Winkel ${"αβγ"[e]}.`);}
+    const e=rnd(0,2);return mc(`Die Seite ${"abc"[e]} liegt welcher Ecke gegenüber?`,svg,"ABC"[e],["ABC"[(e+1)%3],"ABC"[(e+2)%3],"αβγ"[e]],`Die Seite ${"abc"[e]} liegt der Ecke ${"ABC"[e]} gegenüber.`);
+  }
+  const t=rnd(0,2), ex=["Alle drei Seiten sind verschieden lang.","Zwei Seiten sind gleich lang.","Alle drei Seiten sind gleich lang."][t];
+  if(lv===0){const s=seitenTripel(t,false);const lab={a:s[0]+" cm",b:s[1]+" cm",c:s[2]+" cm"};
+    return mc("Wie heißt dieses Dreieck nach seinen Seiten?",triSVG(triFromSides(...s),{sides:lab,vlabels:false}),SEITE[t],SEITE.filter((_,i)=>i!==t),ex);}
+  if(Math.random()<.5){const s=seitenTripel(t,true);
+    return mc(`Ein Dreieck hat die Seiten ${dez(s[0])} cm, ${dez(s[1])} cm und ${dez(s[2])} cm. Wie heißt es nach seinen Seiten?`,null,SEITE[t],SEITE.filter((_,i)=>i!==t),ex);}
+  const s=seitenTripel(t,false);let ticks=[];
+  if(t===2)ticks=["a","b","c"];if(t===1){const L={a:s[0],b:s[1],c:s[2]};const keys=Object.keys(L);ticks=keys.filter(k=>keys.some(j=>j!==k&&L[j]===L[k]));}
+  return mc("Wie heißt dieses Dreieck nach seinen Seiten?",triSVG(triFromSides(...s),{ticks,vlabels:false}),SEITE[t],SEITE.filter((_,i)=>i!==t),
+    t===0?"Keine Seite ist als gleich lang markiert.":"Die Striche zeigen gleich lange Seiten. "+ex);
+}
+const WART=["spitzwinklig","rechtwinklig","stumpfwinklig"];
+function winkelTripel(t){
+  let w;
+  if(t===1){const x=rnd(25,65);w=[90,x,90-x];}
+  else if(t===2){const g=rnd(95,130),x=rnd(25,180-g-25);w=[g,x,180-g-x];}
+  else{do{const a=rnd(35,85),b=rnd(35,85);w=[a,b,180-a-b];}while(w[2]>=90||w[2]<25);}
+  return shuffle(w);
+}
+function g1c(lv){
+  const t=rnd(0,2), w=winkelTripel(t), mx=Math.max(...w);
+  const ex=t===1?"Ein Winkel ist genau 90°.":t===2?`Der Winkel ${mx}° ist größer als 90°.`:"Alle drei Winkel sind kleiner als 90°.";
+  if(lv===0){const r=w.indexOf(90);
+    const svg=triSVG(triFromAngles(w[0],w[1]),{angles:{0:w[0]+"°",1:w[1]+"°",2:w[2]+"°"},right:r>=0?r:null});
+    return mc("Wie heißt dieses Dreieck nach seinen Winkeln?",svg,WART[t],WART.filter((_,i)=>i!==t),ex);}
+  if(lv===1)return mc(`Ein Dreieck hat die Winkel ${w[0]}°, ${w[1]}° und ${w[2]}°. Wie heißt es nach seinen Winkeln?`,null,WART[t],WART.filter((_,i)=>i!==t),ex);
+  let a=w[0],b=w[1];if(Math.random()<.7){const s=w.slice().sort((x,y)=>x-y);a=s[0];b=s[1];} /* meist den größten Winkel verstecken */
+  const c=180-a-b;
+  return mc(`In einem Dreieck ist α = ${a}° und β = ${b}°. Wie heißt das Dreieck nach seinen Winkeln?`,null,WART[t],WART.filter((_,i)=>i!==t),`γ = 180° − ${a}° − ${b}° = ${c}°. ${ex}`);
+}
+function g1d(lv){
+  const GR="αβγ";
+  if(lv===0){let w;do{w=[rnd(28,100),rnd(28,100)];}while(w[0]+w[1]>152);w.push(180-w[0]-w[1]);w=shuffle(w);const u=rnd(0,2);
+    const ang={};[0,1,2].forEach(i=>ang[i]=i===u?"?":w[i]+"°");const gg=[0,1,2].filter(i=>i!==u);
+    return{q:`Berechne ${GR[u]}.`,svg:triSVG(triFromAngles(w[0],w[1]),{angles:ang}),num:w[u],
+      ex:`${GR[u]} = 180° − ${w[gg[0]]}° − ${w[gg[1]]}° = ${w[u]}°`};}
+  if(lv===1){const art=rnd(0,3);
+    if(art===0){const b=rnd(30,80),g=180-2*b;return{q:"Das Dreieck ist gleichschenklig mit der Basis c. Berechne γ.",svg:triSVG(triFromAngles(b,b),{ticks:["a","b"],angles:{1:b+"°",2:"?"}}),num:g,ex:`α = β = ${b}° (Basiswinkel), γ = 180° − 2 · ${b}° = ${g}°`};}
+    if(art===1){const g=2*rnd(14,60),b=(180-g)/2;return{q:"Das Dreieck ist gleichschenklig mit der Basis c. Berechne α.",svg:triSVG(triFromAngles(b,b),{ticks:["a","b"],angles:{0:"?",2:g+"°"}}),num:b,ex:`α = β = (180° − ${g}°) : 2 = ${b}°`};}
+    if(art===2){const a=rnd(28,62);return{q:"Berechne β.",svg:triSVG(triFromAngles(a,180-90-a),{angles:{0:a+"°",1:"?",2:"90°"},right:2}),num:90-a,ex:`β = 180° − 90° − ${a}° = ${90-a}°`};}
+    return{q:"Das Dreieck ist gleichseitig. Wie groß ist γ?",svg:triSVG(triFromAngles(60,60),{ticks:["a","b","c"],angles:{2:"?"}}),num:60,ex:"Im gleichseitigen Dreieck sind alle Winkel gleich: 180° : 3 = 60°"};
+  }
+  const art=rnd(0,2);
+  if(art===0){const a=rnd(15,40),g=180-3*a;return{q:`β ist doppelt so groß wie α und γ = ${g}°. Berechne α.`,svg:null,num:a,ex:`α + 2α = 180° − ${g}° = ${3*a}°, also 3α = ${3*a}° und α = ${a}°`};}
+  if(art===1){const a=rnd(30,55),d=180-3*a;if(d===0)return g1d(2);return{q:`α und β sind gleich groß. γ ist ${d}° größer als α. Berechne α.`,svg:null,num:a,ex:`α + α + (α + ${d}°) = 180°, also 3α = ${180-d}° und α = ${a}°`};}
+  const [p,q2,r]=pick([[1,2,3],[1,1,2],[1,2,2],[1,3,5],[1,1,4],[2,3,4]]),x=180/(p+q2+r);
+  const txt=`Die Winkel eines Dreiecks verhalten sich wie ${p} : ${q2} : ${r}. Wie groß ist der kleinste Winkel?`;
+  return{q:txt,svg:null,num:x*p,ex:`${p} + ${q2} + ${r} = ${p+q2+r} Teile, 180° : ${p+q2+r} = ${x}° pro Teil, der kleinste Winkel ist ${x*p}°`};
+}
+const BOSS={id:"m",name:"Endgegner",gen:lv=>{const t=pick(ALLE);return t.gen(Math.min(2,1+lv));}};
+
+/* ================= Ansichten ================= */
+const app=document.getElementById("app"), zahlEl=document.getElementById("zahl"), zaehler=document.getElementById("zaehler"), mzahl=document.getElementById("mzahl"), muenzer=document.getElementById("muenzer");
+const STERN=(voll,g=1.2)=>voll?`<svg><use href="#st" fill="url(#gold)" stroke="#b86e00" stroke-width="${g}"/></svg>`:`<svg><use href="#st" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.5)" stroke-width="${g}"/></svg>`;
+const STERN_KARTE=voll=>voll?`<svg><use href="#st" fill="url(#gold)" stroke="#b86e00" stroke-width="1"/></svg>`:`<svg><use href="#st" fill="#eef0f7" stroke="#b9c0dc" stroke-width="1"/></svg>`;
+const reihe=(n,f=STERN)=>[0,1,2].map(i=>f(i<n)).join("");
+const ruhig=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+(function himmel(){const h=document.getElementById("himmel");let x="",seed=11;const r=()=>(seed=(seed*9301+49297)%233280)/233280;
+  for(let i=0;i<160;i++)x+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*100).toFixed(2)}%" r="${(r()*1.5+.3).toFixed(2)}" fill="#fff" opacity="${(r()*.7+.2).toFixed(2)}"/>`;h.innerHTML=x;})();
+
+let lehrerMsg="";
+function home(){
+  zahlEl.textContent=summe();mzahl.textContent=S.muenzen;
+  let h=`<p class="sub">Schaffe eine Runde mit ${RUNDE} Aufgaben und höchstens einem Fehler, dann bekommst du einen Stern. Jeder Stern macht das Spiel schwerer. Der erste Stern öffnet das nächste Spiel. Hast du schon drei Sterne, gibt es Bonussterne, und ${BONUS_PRO_MUENZE} Bonussterne werden zu einem Sternwarten-Taler.</p><div class="levels">`;
+  for(const L of LEVELS){
+    if(!L.spiele){h+=`<section class="lv zu"><div class="badge">🔒</div><div class="lvkopf"><div><div class="tag">LEVEL ${L.nr}</div><h2>${L.name}</h2></div><div class="klein">${L.info}</div></div></section>`;continue;}
+    const n=L.spiele.length, max=n*3, hat=L.spiele.reduce((a,s)=>a+stars(s.id),0);
+    let fertig=0;for(const s of L.spiele){if(stars(s.id)>=1)fertig++;else break;}
+    const fill=n>1?Math.min(fertig,n-1)/(n-1)*100:0;
+    h+=`<section class="lv aktiv"><div class="badge">${L.nr}</div><div class="lvkopf"><div><div class="tag">LEVEL ${L.nr}</div><h2>${L.name}</h2></div>
+      <div class="zahl">${STERN(true)} ${hat} von ${max} Sternen</div></div><div class="bahn"><div class="linie"><i style="width:${fill}%"></i></div>`;
+    for(const s of L.spiele){const o=offen(s), st=stars(s.id), cls=!o?"zu":st>=1?"fertig":"jetzt";
+      h+=`<div class="node ${cls}"><button class="kreis" data-play="${s.id}" ${o?"":"disabled"} aria-label="${s.name}${o?"":" (gesperrt)"}">${o?s.nr:"🔒"}</button><b>${s.name}</b>
+        ${cls==="jetzt"?`<button class="btn" data-play="${s.id}">▶ Spielen</button>`:`<div class="sterne">${reihe(st)}</div>`}${(S.bonus[s.id]||0)?`<span class="bonus" title="Bonussterne">+${S.bonus[s.id]} Bonus</span>`:""}</div>`;}
+    h+=`</div></section>`;
+  }
+  const bo=bossOffen();
+  h+=`<section class="lv boss${bo?" aktiv":" zu"}"><div class="badge">${bo?"⚔":"🔒"}</div><div class="lvkopf"><div><div class="tag">ENDGEGNER</div><h2>Endgegner</h2><div class="klein">Aufgaben aus allen Leveln</div></div>
+    ${bo?`<div class="zahl">${STERN(true)} ${stars("m")} von 3 Sternen</div>`:`<div class="klein">erscheint, wenn jedes Spiel mindestens einen Stern hat</div>`}</div>
+    ${bo?`<div class="bossrow"><div class="sterne">${reihe(stars("m"))}</div>${(S.bonus.m||0)?`<span class="bonus">+${S.bonus.m} Bonus</span>`:""}<button class="btn gold" data-play="m">⚔ Kämpfen</button></div>`:""}</section></div>`;
+  h+=`<details${lehrerMsg?" open":""}><summary>Für die Lehrkraft</summary><div class="lehrer">
+    <input type="text" id="code" placeholder="Lehrer-Code" autocomplete="off" aria-label="Lehrer-Code">
+    <button class="btn hell" id="codeBtn">Alle Spiele freischalten</button>
+    <span id="resetBox"><button class="btn hell" id="reset">Fortschritt löschen</button></span>
+    <span class="msg">${lehrerMsg}</span></div></details>`;
+  app.innerHTML=h;
+  app.querySelectorAll("[data-play]").forEach(b=>b.addEventListener("click",()=>start(b.dataset.play)));
+  document.getElementById("codeBtn").addEventListener("click",()=>{
+    const v=document.getElementById("code").value.trim().toUpperCase();
+    if(v===CODE){S.lehrer=true;save();lehrerMsg="Alle Spiele sind freigeschaltet.";}else lehrerMsg="Der Code stimmt nicht.";home();});
+  document.getElementById("reset").addEventListener("click",()=>{
+    document.getElementById("resetBox").innerHTML=`<span class="msg">Wirklich alles löschen?</span> <button class="btn hell" id="resJa">Ja</button> <button class="btn hell" id="resNein">Nein</button>`;
+    document.getElementById("resJa").addEventListener("click",()=>{S={stars:{},bonus:{},topf:0,muenzen:0,lehrer:false};save();lehrerMsg="Der Fortschritt wurde gelöscht.";home();});
+    document.getElementById("resNein").addEventListener("click",home);});
+  window.scrollTo({top:0});
+}
+
+let R=null, letzte="";
+const schluessel=a=>a.q+"|"+(a.svg||"")+"|"+(a.opts?a.opts.slice().sort().join("/"):a.num);
+function start(id){
+  zahlEl.textContent=summe();
+  const spiel=id==="m"?BOSS:ALLE.find(t=>t.id===id);
+  const lv=Math.min(2,stars(id));
+  R={spiel,id,lv,i:0,res:[],aufgaben:[]};
+  const seen=new Set();let versuche=0,grenz=0;
+  const kat=a=>a.kat||(a.opts?a.opts[a.ans]:a.q);
+  while(R.aufgaben.length<RUNDE){
+    const a=spiel.gen(lv), k=schluessel(a), n=R.aufgaben.length, vorher=n?schluessel(R.aufgaben[n-1]):letzte;
+    versuche++;
+    if(k===vorher)continue;                                   /* nie zweimal dieselbe Aufgabe hintereinander */
+    if(versuche<2000){
+      if(seen.has(k))continue;                                /* keine Wiederholung in der Runde */
+      if(n>=2&&kat(R.aufgaben[n-1])===kat(a)&&kat(R.aufgaben[n-2])===kat(a))continue; /* höchstens 2x dieselbe Lösung hintereinander */
+      if(a.grenz&&grenz>=2)continue;                          /* Grenzwerte (89°, 181° …) höchstens zweimal */
+    }
+    if(a.grenz)grenz++;
+    seen.add(k);R.aufgaben.push(a);
+  }
+  letzte=schluessel(R.aufgaben[RUNDE-1]);
+  show();
+}
+const punkte=()=>`<div class="dots" aria-label="Fortschritt">${R.aufgaben.map((_,i)=>`<span class="dot ${R.res[i]===true?"ok":R.res[i]===false?"err":i===R.i?"now":""}"></span>`).join("")}</div>`;
+function kopf(){
+  const name=R.id==="m"?"Endgegner":`Spiel ${R.spiel.nr} · ${R.spiel.name}`;
+  return `<div class="bar"><span class="titel">${name}<small>Schwierigkeit ${"★".repeat(R.lv+1)}</small></span><button class="btn hell" id="abbr">Zur Übersicht</button></div>${punkte()}`;
+}
+function show(){
+  const a=R.aufgaben[R.i];
+  let h=kopf()+`<section class="card"><p class="frage">${esc(a.q)}</p>${a.svg?`<div class="fig">${a.svg}</div>`:""}`;
+  if(a.opts)h+=`<div class="opts">${a.opts.map((o,i)=>`<button data-o="${i}">${esc(o)}</button>`).join("")}</div>`;
+  else h+=`<form class="num" id="numForm"><label for="ein">Antwort:</label><input type="text" id="ein" inputmode="numeric" autocomplete="off"> <span>°</span><button class="btn" type="submit">Prüfen</button></form>`;
+  h+=`<div id="fb"></div></section>`;
+  app.innerHTML=h;
+  document.getElementById("abbr").addEventListener("click",home);
+  if(a.opts)app.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{
+    const k=+b.dataset.o;app.querySelectorAll("[data-o]").forEach(x=>{x.disabled=true;if(+x.dataset.o===a.ans)x.classList.add("richtig");});
+    if(k!==a.ans)b.classList.add("falsch");feedback(k===a.ans,a);}));
+  else{const inp=document.getElementById("ein");inp.focus();
+    document.getElementById("numForm").addEventListener("submit",e=>{e.preventDefault();
+      const v=parseFloat(inp.value.replace(",",".").replace("°",""));if(isNaN(v))return;
+      inp.disabled=true;e.target.querySelector("button").disabled=true;feedback(Math.abs(v-a.num)<1e-9,a);});}
+}
+function feedback(ok,a){
+  R.res[R.i]=ok;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"err"}">${ok?"Richtig!":"Leider falsch."+(a.num!=null?` Richtig ist ${a.num}°.`:"")}<span>${esc(a.ex)}</span></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="weiter">${R.i<RUNDE-1?"Weiter ▶":"Zum Ergebnis ▶"}</button></div>`;
+  app.querySelector(".dots").outerHTML=punkte();
+  const w=document.getElementById("weiter");w.focus();
+  w.addEventListener("click",()=>{R.i++;R.i<RUNDE?show():ende();});
+}
+function ende(){
+  const richtig=R.res.filter(x=>x).length, fehler=RUNDE-richtig, geschafft=fehler<=FEHLER_ERLAUBT;
+  const vorherOffen=ALLE.filter(offen).length, bossVorher=bossOffen(), alt=summe();
+  let neuStern=false,bonus=false,neueMuenze=false;
+  if(geschafft&&stars(R.id)<3){S.stars[R.id]=stars(R.id)+1;neuStern=true;save();}
+  else if(geschafft){S.bonus[R.id]=(S.bonus[R.id]||0)+1;S.topf++;bonus=true;
+    if(S.topf>=BONUS_PRO_MUENZE){S.topf-=BONUS_PRO_MUENZE;S.muenzen++;neueMuenze=true;}save();}
+  const neuSpiel=ALLE.filter(offen).length>vorherOffen, neuBoss=!bossVorher&&bossOffen();
+  let txt;
+  if(geschafft)txt=neuStern?(fehler?"Geschafft mit einem Fehler! Du bekommst einen Stern.":"Fehlerfrei! Du bekommst einen Stern."):(neueMuenze?"Bonusstern! Fünf Bonussterne sind voll: Du bekommst einen Sternwarten-Taler!":"Bonusstern! Sammle weiter für den nächsten Sternwarten-Taler.");
+  else txt=`${richtig} von ${RUNDE} richtig. Mit höchstens einem Fehler bekommst du einen Stern. Versuch es gleich noch einmal!`;
+  const banner=neuBoss?`<div class="banner">⚔ Der Endgegner ist erschienen!</div>`:neuSpiel?`<div class="banner">🔓 Ein neues Spiel ist freigeschaltet!</div>`:"";
+  const s=stars(R.id), zeigt=neuStern?s-1:s;
+  app.innerHTML=kopf()+`<section class="card ende"><div class="gross" id="gross">${reihe(zeigt,STERN_KARTE)}</div><p class="frage">${txt}</p>${bonus?`<div class="topf" aria-label="Bonussterne bis zum nächsten Taler">${neueMuenze?"":Array.from({length:BONUS_PRO_MUENZE},(_,i)=>`<i class="${i<S.topf?"voll":""}"></i>`).join("")} <svg viewBox="0 0 300 300"><use href="#taler"/></svg></div>`:""}${banner}
+    <div class="row"><button class="btn" id="noch">${neuStern&&s<3?"Nächste Runde (schwerer) ▶":"Noch eine Runde ▶"}</button><button class="btn hell" id="heim" style="color:#1b2559;background:#eef0f7;box-shadow:0 5px 0 #b9c0dc">Zur Übersicht</button></div></section>`;
+  document.getElementById("abbr").addEventListener("click",home);
+  document.getElementById("noch").addEventListener("click",()=>start(R.id));
+  document.getElementById("heim").addEventListener("click",home);
+  zahlEl.textContent=alt;mzahl.textContent=S.muenzen-(neueMuenze?1:0);
+  if(neueMuenze)muenzFlug(()=>{mzahl.textContent=S.muenzen;muenzer.classList.add("puls");setTimeout(()=>muenzer.classList.remove("puls"),450);});
+  if(neuStern)sternFlug(()=>{document.getElementById("gross").innerHTML=reihe(s,STERN_KARTE);zahlEl.textContent=summe();
+    zaehler.classList.add("puls");setTimeout(()=>zaehler.classList.remove("puls"),450);});
+}
+function muenzFlug(fertig){
+  if(ruhig||!document.body.animate){fertig();return;}
+  const box=document.createElement("div");box.className="mflug";box.innerHTML=`<svg viewBox="0 0 300 300"><use href="#taler"/></svg>`;document.body.appendChild(box);
+  const coin=box.firstChild;
+  for(let i=0;i<22;i++){const g=document.createElement("div");g.className="glitzer";g.style.left="50%";g.style.top="45%";document.body.appendChild(g);
+    const w=i/22*Math.PI*2, d=130+Math.random()*110;
+    g.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:`translate(calc(-50% + ${Math.cos(w)*d}px),calc(-50% + ${Math.sin(w)*d}px)) scale(.2)`,opacity:0}],{duration:1000,delay:300,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>g.remove();}
+  box.animate([{transform:"translateY(-60vh) scale(.4)"},{transform:"translateY(0) scale(1.15)",offset:.75},{transform:"translateY(0) scale(1)"}],{duration:700,easing:"cubic-bezier(.3,1.4,.5,1)",fill:"forwards"});
+  coin.animate([{transform:"rotateY(0deg)"},{transform:"rotateY(1080deg)"}],{duration:1700,easing:"cubic-bezier(.2,.6,.3,1)",fill:"forwards"}).onfinish=()=>setTimeout(()=>{
+    const z=muenzer.getBoundingClientRect(), b=box.getBoundingClientRect();
+    const dx=z.left+z.width*0.2-(b.left+b.width/2), dy=z.top+z.height/2-(b.top+b.height/2);
+    box.animate([{transform:"translate(0,0) scale(1)"},{transform:`translate(${dx}px,${dy}px) scale(.15)`}],{duration:850,easing:"cubic-bezier(.5,0,.2,1)",fill:"forwards"}).onfinish=()=>{box.remove();fertig();};
+  },250);
+}
+function sternFlug(fertig){
+  if(ruhig||!document.body.animate){fertig();return;}
+  const st=document.createElementNS("http://www.w3.org/2000/svg","svg");st.setAttribute("class","flug");st.setAttribute("viewBox","0 0 24 24");
+  st.innerHTML=`<use href="#st" fill="url(#gold)" stroke="#fff6c8" stroke-width=".6"/>`;document.body.appendChild(st);
+  for(let i=0;i<18;i++){const g=document.createElement("div");g.className="glitzer";g.style.left="50%";g.style.top="45%";document.body.appendChild(g);
+    const w=i/18*Math.PI*2, d=120+Math.random()*90;
+    g.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:`translate(calc(-50% + ${Math.cos(w)*d}px),calc(-50% + ${Math.sin(w)*d}px)) scale(.2)`,opacity:0}],{duration:900,delay:250,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>g.remove();}
+  const a1=st.animate([{transform:"scale(0) rotate(-180deg)",opacity:0},{transform:"scale(1.35) rotate(20deg)",opacity:1,offset:.6},{transform:"scale(1) rotate(0deg)",opacity:1}],{duration:800,easing:"ease-out",fill:"forwards"});
+  a1.onfinish=()=>setTimeout(()=>{
+    const z=zaehler.getBoundingClientRect(), s=st.getBoundingClientRect();
+    const dx=z.left+z.width*0.18-(s.left+s.width/2), dy=z.top+z.height/2-(s.top+s.height/2);
+    st.animate([{transform:"translate(0,0) scale(1) rotate(0deg)"},{transform:`translate(${dx}px,${dy}px) scale(.18) rotate(360deg)`}],{duration:850,easing:"cubic-bezier(.5,0,.2,1)",fill:"forwards"}).onfinish=()=>{st.remove();fertig();};
+  },350);
+}
+home();
+})();
+</script>
+
+</body>
+</html>
