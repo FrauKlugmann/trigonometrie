@@ -551,7 +551,7 @@ function g2c(lv){
 }
 /* 2-4 Sachaufgaben (mit Antwortsatz) */
 function g2d(lv){
-  const sa=(q,num,unit,ex,dez,svg,exakt)=>({q,num,unit,st:dez,exakt:exakt==null?num:exakt,ex,satz:true,svg:svg||null});
+  const sa=(q,num,unit,ex,dez,svg,exakt)=>({q:q+rundTxt(q,exakt==null?num:exakt,dez,unit),num,unit,st:dez,exakt:exakt==null?num:exakt,ex,satz:true,svg:svg||null});
   const leicht=[
     ()=>{const [d,h,l]=pick([[3,4,5],[1.5,2,2.5],[2.5,6,6.5],[0.9,1.2,1.5],[1.2,3.5,3.7]]);
       return sa(`Eine ${z2(l)} m lange Leiter lehnt an einer Hauswand. Ihr Fuß steht ${z2(d)} m von der Wand entfernt. Wie hoch reicht die Leiter?`,h,"m",`h = √(${z2(l)}² − ${z2(d)}²) = √${z2(l*l-d*d,4)} = ${z2(h)} m`,2);},
@@ -600,6 +600,8 @@ function tri3(lv){
 }
 const EINH3=lv=>lv<2?{u:"cm",st:1,g:()=>rnd(30,120)/10}:pick([{u:"cm",st:1,g:()=>rnd(30,150)/10},{u:"m",st:2,g:()=>rnd(120,950)/100},{u:"km",st:3,g:()=>rnd(500,4000)/1000}]);
 const aufg=(q,svg,x,st,unit,ex)=>({q,svg,num:rw(x,st),exakt:x,st,unit,frei:true,ex});
+/* Rundungsvorgabe für Sachaufgaben – nur, wenn das Ergebnis nicht ohnehin glatt ist und die Aufgabe noch keine Vorgabe nennt */
+const rundTxt=(q,x,st,unit)=>/Runde/.test(q)||Math.abs(x-rw(x,st))<1e-9?"":st===0?(unit==="°"?" Runde auf ganze Grad.":unit==="%"?" Runde auf ganze Prozent.":" Runde auf eine ganze Zahl."):" Runde auf "+["","eine Nachkommastelle","zwei Nachkommastellen","drei Nachkommastellen"][st]+".";
 /* Seite berechnen. nenner=false: gesuchte Seite im Zähler; true: im Nenner */
 function seite3(fn,lv,nenner){
   const D=tri3(lv),U=EINH3(lv);let th,G,res,tries=0;
@@ -683,7 +685,7 @@ function g3c(lv){
 }
 /* 3-4 Sachaufgaben mit Antwortsatz */
 function g3d(lv){
-  const sa=(q,x,st,unit,ex)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true});
+  const sa=(q,x,st,unit,ex)=>Object.assign(aufg(q+rundTxt(q,x,st,unit),null,x,st,unit,ex),{satz:true});
   const W=(f)=>{let r;let k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex);};
   const leicht=[
     ()=>W(()=>{const L=pick([4,4.5,5,6,7]),d=rnd(10,25)/10,x=Math.acos(d/L)/GR_;
@@ -695,8 +697,8 @@ function g3d(lv){
   const mittel=[
     ()=>W(()=>{const b=rnd(64,75)/10,h=rnd(140,165)/10,x=Math.atan(h/b)/GR_;
       return{q:`Ein Handy-Display ist ${kz(b)} cm breit und ${kz(h)} cm hoch. Wie groß ist der Winkel zwischen der Diagonale und der kurzen Seite?`,x,st:0,u:"°",ex:`tan α = ${kz(h)} cm / ${kz(b)} cm, also α ≈ ${Math.round(x)}°`};}),
-    ()=>W(()=>{const hc=rnd(20,60),x=hc/100/0.06;
-      return{q:`Eine Rollstuhlrampe darf höchstens 6 % Steigung haben. Sie soll ${hc} cm Höhe überwinden. Wie lang muss sie waagerecht mindestens sein (in m)?`,x,st:2,u:"m",ex:`6 % heißt tan α = 0,06 = ${kz(hc/100)} m / x, also x = ${kz(hc/100)} m : 0,06 ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const hc=3*rnd(7,20),x=hc/6;
+      return{q:`Eine Rollstuhlrampe darf höchstens 6 % Steigung haben. Sie soll ${hc} cm Höhe überwinden. Wie lang muss sie waagerecht mindestens sein (in m)?`,x,st:2,u:"m",ex:`6 % heißt tan α = 0,06 = ${kz(hc/100)} m / x, also x = ${kz(hc/100)} m : 0,06 = ${zz(x,2)} m`};}),
     ()=>W(()=>{const H=rnd(6,15),S=rnd(5,20),x=Math.atan(H/S)/GR_;
       return{q:`Die Turnhalle ist ${H} m hoch und wirft einen ${S} m langen Schatten. Unter welchem Winkel fallen die Sonnenstrahlen auf den Boden?`,x,st:0,u:"°",ex:`tan α = ${H} m / ${S} m, also α ≈ ${Math.round(x)}°`};}),
     ()=>W(()=>{const L=rnd(150,200)/100,w=rnd(20,40),x=L*Math.sin(w*GR_);
@@ -760,7 +762,7 @@ function g4a(lv){
     falsch.push([S(i),[k[j],"sin "+g[r]]]);                          /* zweiter Bruch kein Paar */
     falsch.push([[k[i],"sin "+g[r]],S(j)]);
     if(lv>0)falsch.push([S(i),Wn(j)]);                               /* Brüche verschieden herum */
-    if(lv>1)falsch.push([[k[i],k[j]],["sin "+g[i],"sin "+g[j]]]);}   /* Seiten durch Seiten */
+    if(lv>1)falsch.push([[k[i],k[j]],["sin "+g[j],"sin "+g[i]]]);}   /* Seite durch Seite mit vertauschten Sinus (falsch); a/b = sin α/sin β wäre richtig und wird deshalb nicht angeboten */
   const nR=lv===0?1:lv===1?rnd(1,2):rnd(1,3),nO=lv===0?4:lv===1?4:5;
   const gew=[];const nimm=(L,n)=>{for(const q of shuffle(L)){if(n<=0)break;if(!gew.some(x=>txt(x.q)===txt(q))){gew.push({q,ok:L===richtig});n--;}}};
   nimm(richtig,nR);nimm(falsch,nO-nR);
@@ -804,7 +806,7 @@ function g4b(lv){
 }
 /* 4-3 Sachaufgaben mit Antwortsatz */
 function g4c(lv){
-  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true},alt!=null?{alt:[rw(alt,st)]}:{});
+  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q+rundTxt(q,x,st,unit),null,x,st,unit,ex),{satz:true},alt!=null?{alt:[].concat(alt).map(v=>rw(v,st))}:{});
   const W=f=>{let r,k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex,r.alt);};
   const leicht=[
     ()=>W(()=>{const d=rnd(5,15)*10,al=rnd(40,75),be=rnd(40,75),ga=180-al-be,x=d*sd(be)/sd(ga);
@@ -826,16 +828,17 @@ function g4c(lv){
     ()=>W(()=>{const L=rnd(70,120)/10,ga=rnd(60,110),Kk=rw(L*rnd(45,80)/100,1),x=asd(Kk*sd(ga)/L);
       return{q:`Ein dreieckiges Beet im Schulgarten hat zwei Seiten von ${kz(L)} m und ${kz(Kk)} m. Der Winkel gegenüber der ${kz(L)}-m-Seite ist ${ga}° groß. Wie groß ist der Winkel gegenüber der ${kz(Kk)}-m-Seite?`,x,st:0,u:"°",
         ex:`sin x = ${kz(Kk)} · sin ${ga}° ÷ ${kz(L)} ≈ ${kz(rw(Kk*sd(ga)/L,4))} → x = sin⁻¹(…) ≈ ${Math.round(x)}°`};})];
+  const zw=(v,x)=>`${zz(v,2)} m`+(zz(v,2)!==zz(x,2)?` (mit dem genauen Zwischenwert ${zz(x,2)} m, beides richtig)`:"");
   const schwer=[
     ()=>W(()=>{const d=rnd(3,8)*10,w1=rnd(20,35),w2=w1+rnd(10,25),s=d*sd(w1)/sd(w2-w1),s2=rw(s,2),x=s*sd(w2);
-      return{q:`Jonas und Emma messen den Höhenwinkel zur Spitze eines Freefall-Towers. Jonas steht weiter weg und misst ${w1}°. Emma steht ${d} m näher am Turm und misst ${w2}°. Wie hoch ist der Turm (ohne Augenhöhe)?`,x,st:2,u:"m",alt:s2*sd(w2),
-        ex:`Dreieck Jonas–Emma–Spitze: Winkel an der Spitze ${w2}° − ${w1}° = ${w2-w1}°. Emma bis Spitze: ${d} · sin ${w1}° ÷ sin ${w2-w1}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${w2}° ≈ ${zz(x,2)} m`};}),
+      return{q:`Jonas und Emma messen den Höhenwinkel zur Spitze eines Freefall-Towers. Jonas steht weiter weg und misst ${w1}°. Emma steht ${d} m näher am Turm und misst ${w2}°. Wie hoch ist der Turm (ohne Augenhöhe)? Runde Zwischenergebnisse und das Ergebnis auf zwei Nachkommastellen.`,x,st:2,u:"m",alt:[s2*sd(w2),rw(d*sd(w2)/sd(w2-w1),2)*sd(w1)],
+        ex:`Dreieck Jonas–Emma–Spitze: Winkel an der Spitze ${w2}° − ${w1}° = ${w2-w1}°. Emma bis Spitze: ${d} · sin ${w1}° ÷ sin ${w2-w1}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${w2}° ≈ ${zw(s2*sd(w2),x)}`};}),
     ()=>W(()=>{const d=rnd(4,10)*10,al=rnd(50,75),be=rnd(50,75),ga=180-al-be,s=d*sd(be)/sd(ga),s2=rw(s,2),x=s*sd(al);
-      return{q:`Mia und Tim stehen am Flussufer ${d} m auseinander. Ein Baum steht direkt am anderen Ufer. Bei Mia misst der Winkel zwischen Ufer und Baum ${al}°, bei Tim ${be}°. Wie breit ist der Fluss?`,x,st:2,u:"m",alt:s2*sd(al),
-        ex:`Mia bis Baum: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Breite = ${zz(s,2)} · sin ${al}° ≈ ${zz(x,2)} m`};}),
+      return{q:`Mia und Tim stehen am Flussufer ${d} m auseinander. Ein Baum steht direkt am anderen Ufer. Bei Mia misst der Winkel zwischen Ufer und Baum ${al}°, bei Tim ${be}°. Wie breit ist der Fluss? Runde Zwischenergebnisse und das Ergebnis auf zwei Nachkommastellen.`,x,st:2,u:"m",alt:[s2*sd(al),rw(d*sd(al)/sd(ga),2)*sd(be)],
+        ex:`Mia bis Baum: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Breite = ${zz(s,2)} · sin ${al}° ≈ ${zw(s2*sd(al),x)}`};}),
     ()=>W(()=>{const d=rnd(5,15)*10,al=rnd(30,60),be=rnd(30,60),ga=180-al-be,s=d*sd(be)/sd(ga),s2=rw(s,2),x=s*sd(al);
-      return{q:`Ben und Lea stehen ${d} m auseinander, die Drohne fliegt zwischen ihnen. Ben sieht sie unter dem Höhenwinkel ${al}°, Lea unter ${be}°. Wie hoch fliegt die Drohne (ohne Augenhöhe)?`,x,st:2,u:"m",alt:s2*sd(al),
-        ex:`Ben bis Drohne: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${al}° ≈ ${zz(x,2)} m`};})];
+      return{q:`Ben und Lea stehen ${d} m auseinander, die Drohne fliegt zwischen ihnen. Ben sieht sie unter dem Höhenwinkel ${al}°, Lea unter ${be}°. Wie hoch fliegt die Drohne (ohne Augenhöhe)? Runde Zwischenergebnisse und das Ergebnis auf zwei Nachkommastellen.`,x,st:2,u:"m",alt:[s2*sd(al),rw(d*sd(al)/sd(ga),2)*sd(be)],
+        ex:`Ben bis Drohne: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${al}° ≈ ${zw(s2*sd(al),x)}`};})];
   return pick([leicht,mittel,schwer][lv])();
 }
 /* 4-4 Flächeninhalt */
@@ -869,7 +872,7 @@ const ks=(k,g,i,o1,o2,sign,mitte,wkl)=>`${k[i]}² = ${k[o1]}² + ${k[o2]}² ${si
 const andere=i=>[0,1,2].filter(x=>x!==i);
 /* 5-1 Kosinussatz aufstellen: abwechselnd Mehrfachauswahl und selbst bauen */
 function ks5multi(lv){
-  const e=lv===0?["A","B","C"]:pick(NAMEN4),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),w=dreiWinkel(30);
+  const e=lv===0?["A","B","C"]:pick(NAMEN4),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);let w;do{w=dreiWinkel(30);}while(w.includes(90));   /* kein rechtwinkliges Dreieck, sonst wäre Pythagoras richtig */
   const richtig=[],falsch=[];
   for(let i=0;i<3;i++){const [j,l]=andere(i);
     richtig.push(ks(k,g,i,j,l));if(lv>0)richtig.push(ks(k,g,i,l,j));
@@ -897,15 +900,15 @@ function pruefeKbau(a,sl){const {k,g,i}=a.kbau,[j,l]=andere(i),set=(x,y)=>[x,y].
   return sl[0]===k[i]&&set(sl[1],sl[2])&&set(sl[3],sl[4])&&sl[5]===g[i];}
 /* 5-2 Seiten berechnen */
 function seite5(lv){
-  const e=lv===0?["A","B","C"]:lv===1?pick(NAMEN4):pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),U=EINH4(lv);
+  const e=lv===0?["A","B","C"]:lv===1?pick(NAMEN4):pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),U=EINH4(lv),ND=U.st>2?4:2;
   let i,p,q,w,res,c2,t=0;
   do{i=rnd(0,2);p=U.g();q=U.g();w=lv<2?rnd(25,85):(Math.random()<.7?rnd(95,150):rnd(25,85));c2=p*p+q*q-2*p*q*cd(w);res=Math.sqrt(c2);t++;}
-  while(!fair(res,U.st)&&t<300);
+  while((!fair(res,U.st)||rw(Math.sqrt(rw(c2,ND)),U.st)!==rw(res,U.st))&&t<500);
   const [j,l]=andere(i),L=[];L[i]=res;L[j]=p;L[l]=q;const A=winkelAus(L),s={},wk={};
   s[k[i]]=k[i]+" = ?";s[k[j]]=k[j]+" = "+kz(p)+" "+U.u;s[k[l]]=k[l]+" = "+kz(q)+" "+U.u;wk[i]=w+"°";
   const svg=gdSvg({e,al:A[0],be:A[1],s,wk,w:330});
   const a=aufg(`Berechne ${k[i]}. Runde sinnvoll und schreibe die Einheit dazu.`,svg,res,U.st,U.u,
-    `${k[i]}² = ${kz(p)}² + ${kz(q)}² − 2 · ${kz(p)} · ${kz(q)} · cos ${w}° ≈ ${zz(c2,2)} → ${k[i]} = √${zz(c2,2)} ≈ ${zz(res,U.st)} ${U.u}`+(w>90?` (cos ${w}° ist negativ, deshalb wird ${k[i]} besonders lang)`:""));
+    `${k[i]}² = ${kz(p)}² + ${kz(q)}² − 2 · ${kz(p)} · ${kz(q)} · cos ${w}° ≈ ${zz(c2,ND)} → ${k[i]} = √${zz(c2,ND)} ≈ ${zz(res,U.st)} ${U.u}`+(w>90?` (cos ${w}° ist negativ, deshalb wird ${k[i]} besonders lang)`:""));
   a.alt=[rw(Math.sqrt(rw(c2,2)),U.st)];a.kat=w>90?"stumpf":"spitz";return a;
 }
 /* 5-3 Winkel berechnen */
@@ -926,7 +929,7 @@ function g5b(lv){return seite5(lv);}
 function g5c(lv){return winkel5(lv);}
 /* 5-4 Sachaufgaben (nur Kosinussatz; Handwerk und Bauwerke) */
 function g5d(lv){
-  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true},alt!=null?{alt:[rw(alt,st)]}:{});
+  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q+rundTxt(q,x,st,unit),null,x,st,unit,ex),{satz:true},alt!=null?{alt:[].concat(alt).map(v=>rw(v,st))}:{});
   const W=f=>{let r,k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex,r.alt);};
   const seite=(p,q,w)=>Math.sqrt(p*p+q*q-2*p*q*cd(w));
   const leicht=[
@@ -954,7 +957,7 @@ function g5d(lv){
     ()=>W(()=>{const s=rnd(45,70)/10,B=rw(s*rnd(120,170)/100,1),x=acd((2*s*s-B*B)/(2*s*s));
       return{q:`Ein Satteldach hat zwei gleich lange Sparren von ${kz(s)} m. Das Haus ist ${kz(B)} m breit. Wie groß ist der Winkel am First?`,x,st:0,u:"°",
         ex:`cos γ = (${kz(s)}² + ${kz(s)}² − ${kz(B)}²) ÷ (2 · ${kz(s)} · ${kz(s)}) ≈ ${kz(rw((2*s*s-B*B)/(2*s*s),4))} → γ ≈ ${Math.round(x)}°`};}),
-    ()=>W(()=>{const d1=rnd(40,90),d2=rnd(40,90),b=rnd(30,60),x=acd((d1*d1+d2*d2-b*b)/(2*d1*d2));
+    ()=>W(()=>{let d1,d2,b,x;do{d1=rnd(40,90);d2=rnd(40,90);b=rnd(30,60);x=acd((d1*d1+d2*d2-b*b)/(2*d1*d2));}while(Math.abs(d1-d2)+5>=b||x<15);
       return{q:`Lea fotografiert die Fassade ${pick(BAU)}. Sie steht ${d1} m von der linken und ${d2} m von der rechten Ecke entfernt. Die Fassade ist ${b} m breit. Unter welchem Blickwinkel sieht Lea die Fassade?`,x,st:0,u:"°",
         ex:`cos φ = (${d1}² + ${d2}² − ${b}²) ÷ (2 · ${d1} · ${d2}) ≈ ${kz(rw((d1*d1+d2*d2-b*b)/(2*d1*d2),4))} → φ ≈ ${Math.round(x)}°`};}),
     ()=>W(()=>{let p,q,r;do{p=rnd(20,40)/10;q=rnd(20,40)/10;r=rnd(30,60)/10;}while(r>=p+q-0.5||r<=Math.max(p,q));const x=acd((p*p+q*q-r*r)/(2*p*q));
@@ -967,20 +970,20 @@ function g5d(lv){
 const SAETZE=["Satz des Pythagoras","sin, cos oder tan","Sinussatz","Kosinussatz"];
 function satzFall(lv,typ){
   const e=lv===0?["A","B","C"]:pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
-  const L=()=>kz(rnd(30,120)/10)+" cm";
+  let F=0;const L=i=>{const W=[al,be,180-al-be];if(!F)F=rnd(70,125)/10/Math.max(...W.map(sd));return kz(rw(F*sd(W[i]),1))+" cm";};   /* Längen maßstäblich zur Zeichnung */
   let al,be,s={},wk={},ans,beschr;
   if(typ==="P"||typ==="T"){/* rechter Winkel bei der dritten Ecke */
     al=rnd(30,60);be=90-al;wk[2]="90°";
-    if(typ==="P"){if(Math.random()<.5){s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]=k[2]+" = ?";}else{s[k[2]]=k[2]+" = "+L();s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = ?";}ans=SAETZE[0];
+    if(typ==="P"){if(Math.random()<.5){s[k[0]]=k[0]+" = "+L(0);s[k[1]]=k[1]+" = "+L(1);s[k[2]]=k[2]+" = ?";}else{s[k[2]]=k[2]+" = "+L(2);s[k[0]]=k[0]+" = "+L(0);s[k[1]]=k[1]+" = ?";}ans=SAETZE[0];
       beschr="Rechtwinkliges Dreieck, zwei Seiten gegeben, die dritte Seite gesucht.";}
-    else{if(Math.random()<.5){s[k[2]]=k[2]+" = "+L();wk[0]=al+"°";s[k[0]]=k[0]+" = ?";s[k[1]]="";}else{s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]="";wk[0]="?";}ans=SAETZE[1];
+    else{if(Math.random()<.5){s[k[2]]=k[2]+" = "+L(2);wk[0]=al+"°";s[k[0]]=k[0]+" = ?";s[k[1]]="";}else{s[k[0]]=k[0]+" = "+L(0);s[k[1]]=k[1]+" = "+L(1);s[k[2]]="";wk[0]="?";}ans=SAETZE[1];
       beschr="Rechtwinkliges Dreieck, ein Winkel und eine Seite oder zwei Seiten und ein Winkel gesucht.";}}
-  else{const w=dreiWinkel(30);al=w[0];be=w[1];const i=rnd(0,2),[j,l]=andere(i);
-    if(typ==="S"){if(Math.random()<.5){wk[i]=w[i]+"°";wk[j]=w[j]+"°";s[k[i]]=k[i]+" = "+L();s[k[j]]=k[j]+" = ?";s[k[l]]="";}
-      else{wk[i]=w[i]+"°";s[k[i]]=k[i]+" = "+L();s[k[j]]=k[j]+" = "+L();wk[j]="?";s[k[l]]="";}ans=SAETZE[2];beschr="Ein Paar aus Seite und gegenüberliegendem Winkel ist bekannt.";}
-    else if(typ==="K1"){const ww=lv===2&&Math.random()<.6?pick([84,86,87,88,92,93,94,96]):w[i];wk[i]=ww+"°";s[k[j]]=k[j]+" = "+L();s[k[l]]=k[l]+" = "+L();s[k[i]]=k[i]+" = ?";ans=SAETZE[3];
+  else{let w;do{w=dreiWinkel(30);}while(w.includes(90));al=w[0];be=w[1];const i=rnd(0,2),[j,l]=andere(i);
+    if(typ==="S"){if(Math.random()<.5){wk[i]=w[i]+"°";wk[j]=w[j]+"°";s[k[i]]=k[i]+" = "+L(i);s[k[j]]=k[j]+" = ?";s[k[l]]="";}
+      else{wk[i]=w[i]+"°";s[k[i]]=k[i]+" = "+L(i);s[k[j]]=k[j]+" = "+L(j);wk[j]="?";s[k[l]]="";}ans=SAETZE[2];beschr="Ein Paar aus Seite und gegenüberliegendem Winkel ist bekannt.";}
+    else if(typ==="K1"){const ww=lv===2&&Math.random()<.6?pick([84,86,87,88,92,93,94,96]):w[i];wk[i]=ww+"°";s[k[j]]=k[j]+" = "+L(j);s[k[l]]=k[l]+" = "+L(l);s[k[i]]=k[i]+" = ?";ans=SAETZE[3];
       beschr="Zwei Seiten und der Winkel dazwischen sind gegeben, die dritte Seite ist gesucht.";}
-    else{s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]=k[2]+" = "+L();wk[i]="?";ans=SAETZE[3];beschr="Alle drei Seiten sind gegeben, ein Winkel ist gesucht.";}}
+    else{s[k[0]]=k[0]+" = "+L(0);s[k[1]]=k[1]+" = "+L(1);s[k[2]]=k[2]+" = "+L(2);wk[i]="?";ans=SAETZE[3];beschr="Alle drei Seiten sind gegeben, ein Winkel ist gesucht.";}}
   return {svg:gdSvg({e,al,be,s,wk,w:300}),ans,beschr,recht:typ==="P"||typ==="T"};
 }
 function gE1(lv){
@@ -1011,7 +1014,7 @@ const ruhig=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduc
 let lehrerMsg="";
 function home(){
   zahlEl.textContent=summe();mzahl.textContent=S.muenzen;
-  let h=`<p class="sub">Schaffe eine Runde (meist ${RUNDE} Aufgaben, bei schweren Spielen 7 oder 5) mit höchstens ${FEHLER_ERLAUBT} Fehlern, dann bekommst du einen Stern. Ist deine erste Antwort falsch, hast du noch einen zweiten Versuch. Jeder Stern macht das Spiel schwerer. Der erste Stern öffnet das nächste Spiel. Hast du schon drei Sterne, gibt es Bonussterne, und ${BONUS_PRO_MUENZE} Bonussterne werden zu einem Credit.</p><div class="levels">`;
+  let h=`<p class="sub">Schaffe eine Runde (meist ${RUNDE} Aufgaben, bei schweren Spielen 7 oder 5) mit höchstens ${FEHLER_ERLAUBT} Fehlern, dann bekommst du einen Stern. Ist deine erste Antwort falsch, hast du noch einen zweiten Versuch (nicht bei Ja/Nein-Fragen). Jeder Stern macht das Spiel schwerer. Der erste Stern öffnet das nächste Spiel. Hast du schon drei Sterne, gibt es Bonussterne, und ${BONUS_PRO_MUENZE} Bonussterne werden zu einem Credit.</p><div class="levels">`;
   for(const L of LEVELS){
     if(!L.spiele){h+=`<section class="lv zu"><div class="badge">🔒</div><div class="lvkopf"><div><div class="tag">LEVEL ${L.nr}</div><h2>${L.name}</h2></div><div class="klein">${L.info}</div></div></section>`;continue;}
     const n=L.spiele.length, max=n*3, hat=L.spiele.reduce((a,s)=>a+stars(s.id),0);
@@ -1080,7 +1083,7 @@ function kopf(){
 /* Bewertung: richtig ist nur das korrekt gerundete Ergebnis; richtig gerechnet, aber nicht gerundet → "rund" (gelber Hinweis); keine Toleranzen */
 function bewerteZahl(raw,a){
   const m=String(raw).trim().replace(/\s+/g," ").match(/^([+-]?\d+(?:[.,]\d+)?)\s*(.*)$/);if(!m)return "falsch";
-  const v=parseFloat(m[1].replace(",",".")),d=(m[1].split(/[.,]/)[1]||"").length,u=m[2].trim().toLowerCase().replace(/^grad$/,"°").replace(/^([a-z]+)2$/,"$1²");
+  const v=parseFloat(m[1].replace(",",".")),d=(m[1].split(/[.,]/)[1]||"").length,u=m[2].trim().toLowerCase().replace(/\s+/g,"").replace(/\.$/,"").replace(/^grad$/,"°").replace(/^prozent$/,"%").replace(/^(quadratzentimeter|qcm)$/,"cm²").replace(/^(quadratmeter|qm)$/,"m²").replace(/^zentimeter$/,"cm").replace(/^kilometer$/,"km").replace(/^meter$/,"m").replace(/^([a-z]+)\^?2$/,"$1²");
   let ue="ok";
   if(a.frei){const E=(a.unit==null?"°":a.unit).toLowerCase();
     if(E==="°"||E==="")ue=(u===""||u===E)?"ok":"falsch";else ue=u===E?"ok":(u===""?"einheit":"falsch");}
@@ -1091,7 +1094,7 @@ function bewerteZahl(raw,a){
 }
 function bewerteSatz(st,a){
   st=String(st).trim();if(st.split(/\s+/).length<3)return "falsch";
-  const E={"cm":/cm|zentimeter/i,"m":/(\d|\s)m(\b|$)|meter/i,"km":/km|kilometer/i,"cm²":/cm²|cm2|quadratzentimeter/i,"m²":/m²|m2|quadratmeter/i,"°":/°|grad/i,"%":/%|prozent/i}[a.unit==null?"°":a.unit];
+  const E={"cm":/cm|zentimeter/i,"m":/(\d|\s)m(\b|$)|meter/i,"km":/km|kilometer/i,"cm²":/cm²|cm\^?2|qcm|quadratzentimeter/i,"m²":/m²|m\^?2|qm|quadratmeter/i,"°":/°|grad/i,"%":/%|prozent/i}[a.unit==null?"°":a.unit];
   let best="falsch";(st.match(/\d+(?:[.,]\d+)?/g)||[]).forEach(z=>{const s=bewerteZahl(z,{num:a.num,exakt:a.exakt,st:a.st,alt:a.alt});if(s==="ok")best="ok";else if(s==="rund"&&best==="falsch")best="rund";});
   if(best==="ok"&&E&&!E.test(st))return "einheit";
   return best;
@@ -1118,7 +1121,7 @@ function show(){
   const hinweis=()=>{document.getElementById("fb").innerHTML=`<div class="fb hinweis">Prüfe noch einmal! <span>Du hast noch einen zweiten Versuch.</span></div>`;};
   if(a.opts)app.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{
     const k=+b.dataset.o;
-    if(k!==a.ans&&R.versuch===0){R.versuch=1;b.classList.add("gelb");b.disabled=true;hinweis();return;}
+    if(k!==a.ans&&R.versuch===0&&a.opts.length>2){R.versuch=1;b.classList.add("gelb");b.disabled=true;hinweis();return;}
     app.querySelectorAll("[data-o]").forEach(x=>{x.disabled=true;x.classList.remove("gelb");if(+x.dataset.o===a.ans)x.classList.add("richtig");});
     if(k!==a.ans)b.classList.add("falsch");feedback(k===a.ans,a);}));
   else if(a.multi){const M=document.getElementById("multi"),bs=[...M.querySelectorAll("[data-m]")];
