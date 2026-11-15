@@ -1,6 +1,6 @@
-<!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Trainer Trigonometrie</title>
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trainer Trigonometrie</title></head><body>
+
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: Levelspiel unter dem Nachthimmel. Startseite = Level-Pfad, Spielfeld = weiße Aufgabenkarte, Sterne fliegen zum Zähler oben */
@@ -118,13 +118,31 @@ input[type=text]{font:inherit;border:2px solid var(--glasrand);background:rgba(0
 .num input.gelb{background:#FFF3B0;border-color:#C99700}
 .fb.hinweis{background:#FFF3B0;color:#7a5a00}
 .fb > span{display:block;font-weight:400;color:var(--tinte);margin-top:4px}
-.fb span.fr{display:inline-flex;margin:0 .12em}.fb .fr span{display:block;margin:0}
+.fb span.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.15}.fb .fr span:first-child{border-bottom:2px solid currentColor;padding:0 .15em}.fb .fr span{display:block;margin:0}
 .dot.gelb{background:#ffd54a;border-color:#ffd54a}
 .fehlz{font-weight:700;font-size:.95rem;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 14px}
 .fehlz.zuviel{background:#ff6b6b;border-color:#ff6b6b;color:#fff}
+.num.satzz{margin-top:10px}.num.satzz input{flex:1;min-width:14em;width:auto}
+.card .fig svg{max-width:100%;height:auto}
+.opts.multi{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.opts.multi button{font-size:1.15rem;display:flex;align-items:center;justify-content:center;gap:.3em}
+.opts.multi button.an{background:#dfe5ff;border-color:#3b4fa8;box-shadow:0 4px 0 #3b4fa8}.opts.multi button.an.gelb{background:#FFF3B0;border-color:#C99700;color:#7a5a00;box-shadow:0 4px 0 #C99700}
+.mfr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.2}.mfr span:first-child{border-bottom:2px solid currentColor;padding:0 .2em}
+.bau{display:flex;flex-direction:column;gap:16px;align-items:center;border-radius:14px;padding:10px}
+.bau.gelb{background:#FFF3B0}
+.bruchreihe{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+.bfr{display:inline-flex;flex-direction:column;align-items:center;gap:5px}
+.bstrich{width:100%;min-width:4.4em;height:3px;background:#111;border-radius:2px}
+.slot{font:inherit;font-size:1.25rem;font-weight:700;min-width:4.4em;height:2.2em;border:2.5px dashed #1b2559;border-radius:10px;background:#fff;color:#1b2559;cursor:pointer;touch-action:manipulation}
+.slot.voll{border-style:solid;background:#eef0f7}
+.kgl{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;font-size:1.35rem;font-weight:700;color:#1b2559}.kgl .slot{min-width:2.6em}
+.gl{font-size:1.6rem;font-weight:800;color:#111}
+.steine{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.steine button{font:inherit;cursor:pointer;padding:10px 16px;font-size:1.2rem;font-weight:700;border:2.5px solid #1b2559;border-radius:12px;background:#fff;color:#1b2559;box-shadow:0 4px 0 #1b2559;touch-action:manipulation}
+.steine button.seiteb{font-style:italic}
+.steine button:disabled{opacity:.3;cursor:default}
 </style>
 
-</head><body>
 <svg id="himmel" aria-hidden="true"></svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".45" stop-color="#ffd23f"/><stop offset="1" stop-color="#f29a00"/></linearGradient>
@@ -162,10 +180,26 @@ const LEVELS=[
     {id:"1b",nr:"1-2",name:"Dreiecke nach Seiten",gen:g1b},
     {id:"1c",nr:"1-3",name:"Dreiecke nach Winkeln",gen:g1c},
     {id:"1d",nr:"1-4",name:"Innenwinkelsumme",gen:g1d}]},
-  {nr:2,name:"Rechtwinkliges Dreieck und Pythagoras",spiele:null,info:"ab nächster Woche"},
-  {nr:3,name:"Sinus, Kosinus und Tangens",spiele:null,info:"kommt bald"},
-  {nr:4,name:"Sinussatz",spiele:null,info:"kommt bald"},
-  {nr:5,name:"Kosinussatz",spiele:null,info:"kommt bald"}];
+  {nr:2,name:"Rechtwinkliges Dreieck und Pythagoras",spiele:[
+    {id:"2a",nr:"2-1",name:"Kathete, Hypotenuse, Pythagoras",gen:g2a},
+    {id:"2b",nr:"2-2",name:"Seiten berechnen",gen:g2b,runde:7},
+    {id:"2c",nr:"2-3",name:"Flächeninhalt",gen:g2c,runde:7},
+    {id:"2d",nr:"2-4",name:"Sachaufgaben",gen:g2d,runde:5}]},
+  {nr:3,name:"Sinus, Kosinus und Tangens",spiele:[
+    {id:"3a",nr:"3-1",name:"Sinus",gen:g3a},
+    {id:"3b",nr:"3-2",name:"Kosinus",gen:g3b,runde:7},
+    {id:"3c",nr:"3-3",name:"Tangens",gen:g3c,runde:7},
+    {id:"3d",nr:"3-4",name:"Sachaufgaben",gen:g3d,runde:5}]},
+  {nr:4,name:"Sinussatz",spiele:[
+    {id:"4a",nr:"4-1",name:"Sinussatz aufstellen",gen:g4a},
+    {id:"4b",nr:"4-2",name:"Seiten und Winkel",gen:g4b,runde:7},
+    {id:"4c",nr:"4-3",name:"Sachaufgaben",gen:g4c,runde:5},
+    {id:"4d",nr:"4-4",name:"Flächeninhalt",gen:g4d,runde:7}]},
+  {nr:5,name:"Kosinussatz",spiele:[
+    {id:"5a",nr:"5-1",name:"Kosinussatz aufstellen",gen:g5a},
+    {id:"5b",nr:"5-2",name:"Seiten berechnen",gen:g5b,runde:7},
+    {id:"5c",nr:"5-3",name:"Winkel berechnen",gen:g5c,runde:7},
+    {id:"5d",nr:"5-4",name:"Sachaufgaben",gen:g5d,runde:5}]}];
 const ALLE=LEVELS.flatMap(l=>l.spiele||[]);
 const BONUS_PRO_MUENZE=5, HTML=false, STD_EINHEIT="°";
 let S={stars:{},bonus:{},topf:0,muenzen:0,lehrer:false};
@@ -330,7 +364,639 @@ function g1d(lv){
   const txt=`Die Winkel eines Dreiecks verhalten sich wie ${p} : ${q2} : ${r}. Wie groß ist der kleinste Winkel?`;
   return{q:txt,svg:null,num:x*p,ex:`${p} + ${q2} + ${r} = ${p+q2+r} Teile, 180° : ${p+q2+r} = ${x}° pro Teil, der kleinste Winkel ist ${x*p}°`};
 }
-const BOSS={id:"m",name:"Endgegner",gen:lv=>{const t=pick(ALLE);return t.gen(Math.min(2,1+lv));}};
+/* ─── Geometrie-Helfer „Rechtwinklige Dreiecke“ (Arbeitsblattvorlage: rechter Winkel mit Bogen und Punkt, Ecken gegen den Uhrzeigersinn, Seite gegenüber der gleichnamigen Ecke) ─── */
+const gU=(x,y)=>{const l=Math.hypot(x,y)||1;return[x/l,y/l];};
+const gE=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const gZ=(x,d)=>{const f=Math.pow(10,d==null?1:d);return String(Math.round(x*f)/f).replace(".",",");};
+function gT(x,y,s,o){o=o||{};return '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" font-size="'+(o.size||16)+'" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" fill="'+(o.fill||"#000")+'"'+(o.bold?' font-weight="700"':'')+(o.it?' font-style="italic"':'')+'>'+gE(s)+'</text>';}
+/* rtSvg({e:["A","B","C"], r:2, L:[4,3], rot:0, s:{a:"5 cm"}, farbe:{c:"#C62828"}, klick:false, w:260})
+   e = Ecken gegen den Uhrzeigersinn · r = Index der Ecke mit dem rechten Winkel · L = [Länge zur nächsten Ecke, Länge zur übernächsten]
+   rot = Drehung in Grad · s = Seitenbeschriftung (Schlüssel = kleiner Buchstabe; fehlt eine Seite, steht ihr Buchstabe; s:false = keine)
+   fix = feste Pixel je Einheit (dann wächst das Dreieck sichtbar), org = [x,y] Lage des rechten Winkels bei fix */
+function rtSvg(o){
+  o=o||{};const e=o.e||["A","B","C"],r=o.r==null?2:o.r,L=o.L||[4,3],rot=(o.rot||0)*Math.PI/180;
+  const n=(r+1)%3,p=(r+2)%3,raw=[];raw[r]=[0,0];raw[n]=[L[0],0];raw[p]=[0,L[1]];
+  /* Regel: erste Ecke links unten, dann gegen den Uhrzeigersinn → Seite e0e1 waagerecht unten, e0 links; rot erzeugt nur eine leichte Neigung */
+  const phi=Math.atan2(raw[1][1]-raw[0][1],raw[1][0]-raw[0][0]),al=(Math.atan2(raw[2][1]-raw[0][1],raw[2][0]-raw[0][0])-phi)*180/Math.PI;
+  const kw=o.kipp!=null?o.kipp:(o.rot?((Math.round(o.rot)*7)%21+21)%21:0),kipp=Math.min(kw,Math.max(0,90-(((al%360)+360)%360)-3))*Math.PI/180,w0=-phi+kipp;
+  const pts=raw.map(([x,y])=>{x-=raw[0][0];y-=raw[0][1];return[x*Math.cos(w0)-y*Math.sin(w0),x*Math.sin(w0)+y*Math.cos(w0)];});
+  const pad=o.pad||(o.s&&Object.values(o.s).some(x=>String(x).length>2)?60:44),xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]),W=o.bw||300;
+  const dxs=(Math.max(...xs)-Math.min(...xs))||1,dys=(Math.max(...ys)-Math.min(...ys))||1,H=o.bh||Math.round(Math.max(130,Math.min(240,2*pad+(W-2*pad)*dys/dxs)));
+  let sc,ox,oy;
+  if(o.fix){sc=o.fix;ox=o.org[0];oy=o.org[1];}
+  else{sc=Math.min((W-2*pad)/((Math.max(...xs)-Math.min(...xs))||1),(H-2*pad)/((Math.max(...ys)-Math.min(...ys))||1));
+    ox=(W-sc*(Math.max(...xs)+Math.min(...xs)))/2;oy=(H+sc*(Math.max(...ys)+Math.min(...ys)))/2;}
+  const P=pts.map(([x,y])=>[ox+sc*x,oy-sc*y]),G=[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Rechtwinkliges Dreieck '+e.join("")+'" style="width:'+(o.w||W)+'px;max-width:100%;height:auto;font-family:Arial,sans-serif">';
+  const u=gU(P[n][0]-P[r][0],P[n][1]-P[r][1]),v=gU(P[p][0]-P[r][0],P[p][1]-P[r][1]),ra=o.ra||24,cr=u[0]*v[1]-u[1]*v[0],bi=gU(u[0]+v[0],u[1]+v[1]);
+  s+='<path d="M'+P[r][0].toFixed(1)+' '+P[r][1].toFixed(1)+' L'+(P[r][0]+ra*u[0]).toFixed(1)+' '+(P[r][1]+ra*u[1]).toFixed(1)+' A'+ra+' '+ra+' 0 0 '+(cr>0?1:0)+' '+(P[r][0]+ra*v[0]).toFixed(1)+' '+(P[r][1]+ra*v[1]).toFixed(1)+' Z" fill="#e9e9e9" stroke="#000" stroke-width="1.3"/>';
+  s+='<circle cx="'+(P[r][0]+9.5*bi[0]).toFixed(1)+'" cy="'+(P[r][1]+9.5*bi[1]).toFixed(1)+'" r="2.8" fill="#000"/>';
+  /* wk: [{i:Index der Ecke, t:"α" oder "35°", f:true = oranger Bogen (nur Entdecker/Benennen)}] */
+  (o.wk||[]).forEach(w=>{const i=w.i,j=(i+1)%3,k=(i+2)%3,u1=gU(P[j][0]-P[i][0],P[j][1]-P[i][1]),v1=gU(P[k][0]-P[i][0],P[k][1]-P[i][1]);
+    const l1=Math.hypot(P[j][0]-P[i][0],P[j][1]-P[i][1]),l2=Math.hypot(P[k][0]-P[i][0],P[k][1]-P[i][1]),rr=Math.min(w.r||32,.4*Math.min(l1,l2));
+    const c1=u1[0]*v1[1]-u1[1]*v1[0],b1=gU(u1[0]+v1[0],u1[1]+v1[1]),col=w.f?"#C2410C":"#000";
+    s+='<path d="M'+P[i][0].toFixed(1)+' '+P[i][1].toFixed(1)+' L'+(P[i][0]+rr*u1[0]).toFixed(1)+' '+(P[i][1]+rr*u1[1]).toFixed(1)+' A'+rr.toFixed(1)+' '+rr.toFixed(1)+' 0 0 '+(c1>0?1:0)+' '+(P[i][0]+rr*v1[0]).toFixed(1)+' '+(P[i][1]+rr*v1[1]).toFixed(1)+' Z" fill="'+(w.f?"#FBEADF":"#e9e9e9")+'" stroke="'+col+'" stroke-width="'+(w.f?2.6:1.3)+'"/>';
+    const ang=Math.acos(Math.max(-1,Math.min(1,u1[0]*v1[0]+u1[1]*v1[1]))),tl=String(w.t||"").length,d=Math.max(rr+12,(tl*4.5+8)/Math.sin(ang/2));
+    if(w.t)s+=gT(P[i][0]+d*b1[0],P[i][1]+d*b1[1],w.t,{bold:true,size:16,fill:col});});
+  const lab=[];
+  for(let k=0;k<3;k++){
+    const i=(k+1)%3,j=(k+2)%3,nm=e[k].toLowerCase(),A=P[i],B=P[j],M=[(A[0]+B[0])/2,(A[1]+B[1])/2],d=gU(B[0]-A[0],B[1]-A[1]);
+    let nn=[-d[1],d[0]];if((M[0]-G[0])*nn[0]+(M[1]-G[1])*nn[1]<0)nn=[-nn[0],-nn[1]];
+    const f=(o.farbe&&o.farbe[nm])||"#000";
+    s+='<line class="seite" data-s="'+nm+'" x1="'+A[0].toFixed(1)+'" y1="'+A[1].toFixed(1)+'" x2="'+B[0].toFixed(1)+'" y2="'+B[1].toFixed(1)+'" stroke="'+f+'" stroke-width="'+(f==="#000"?3:5)+'" stroke-linecap="round"/>';
+    if(o.klick)s+='<line class="hit" data-s="'+nm+'" x1="'+A[0].toFixed(1)+'" y1="'+A[1].toFixed(1)+'" x2="'+B[0].toFixed(1)+'" y2="'+B[1].toFixed(1)+'" stroke="transparent" stroke-width="24" style="cursor:pointer"/>';
+    if(o.s!==false){const t=o.s&&o.s[nm]!=null?o.s[nm]:nm;if(t!==""){const off=13+Math.abs(nn[0])*t.length*4.6+Math.abs(nn[1])*6;
+      lab.push(gT(M[0]+off*nn[0],M[1]+off*nn[1],t,{it:t.length===1,size:o.fs||16,fill:f==="#000"?"#000":f,bold:f!=="#000"}));}}
+  }
+  s+=lab.join("");
+  for(let k=0;k<3;k++){const q=gU(P[k][0]-G[0],P[k][1]-G[1]);s+=gT(P[k][0]+17*q[0],P[k][1]+17*q[1],e[k],{bold:true,size:17});}
+  return s+'</svg>';
+}
+/* qSvg(a,b): rechtwinkliges Dreieck ABC (A links unten, B rechts unten, rechter Winkel bei C oben) mit Quadraten über allen drei Seiten; feste Größe (1 cm = u px) */
+function qSvg(a,b,o){
+  o=o||{};const u=o.u||22,c=Math.hypot(a,b),A=[0,0],B=[c,0],C=[b*b/c,a*b/c];
+  const sqr=(P,Q)=>{const d=[Q[0]-P[0],Q[1]-P[1]],nn=[d[1],-d[0]];return[P,Q,[Q[0]+nn[0],Q[1]+nn[1]],[P[0]+nn[0],P[1]+nn[1]]];};
+  const S={c:sqr(A,B),a:sqr(B,C),b:sqr(C,A)},all=[].concat(S.a,S.b,S.c);
+  const mnx=Math.min(...all.map(q=>q[0])),mxx=Math.max(...all.map(q=>q[0])),mny=Math.min(...all.map(q=>q[1])),mxy=Math.max(...all.map(q=>q[1])),pad=24;
+  const W=(mxx-mnx)*u+2*pad,H=(mxy-mny)*u+2*pad,X=x=>pad+(x-mnx)*u,Y=y=>pad+(mxy-y)*u,pt=q=>X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1);
+  let s='<svg viewBox="0 0 '+W.toFixed(0)+' '+H.toFixed(0)+'" role="img" aria-label="Quadrate über den Seiten" style="width:'+(o.w||W.toFixed(0))+'px;max-width:100%;height:auto;font-family:Arial,sans-serif">';
+  const quad=(Q,f,st,n)=>{let h='<polygon points="'+Q.map(pt).join(" ")+'" fill="'+f+'" stroke="'+st+'" stroke-width="2"/>';
+    if(n){const P=Q[0],ux=(Q[1][0]-P[0])/n,uy=(Q[1][1]-P[1])/n,vx=(Q[3][0]-P[0])/n,vy=(Q[3][1]-P[1])/n;
+      for(let i=1;i<n;i++){h+='<line x1="'+X(P[0]+i*ux)+'" y1="'+Y(P[1]+i*uy)+'" x2="'+X(P[0]+i*ux+n*vx)+'" y2="'+Y(P[1]+i*uy+n*vy)+'" stroke="#7aa6d6" stroke-width="1"/>';
+        h+='<line x1="'+X(P[0]+i*vx)+'" y1="'+Y(P[1]+i*vy)+'" x2="'+X(P[0]+i*vx+n*ux)+'" y2="'+Y(P[1]+i*vy+n*uy)+'" stroke="#7aa6d6" stroke-width="1"/>';}}
+    return h;};
+  s+=quad(S.c,"#FDE7E7","#C62828",0)+quad(S.a,"#E3EEFB","#1565C0",Number.isInteger(a)?a:0)+quad(S.b,"#E3EEFB","#1565C0",Number.isInteger(b)?b:0);
+  s+='<polygon points="'+[A,B,C].map(pt).join(" ")+'" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/>';
+  const uC=gU(X(A[0])-X(C[0]),Y(A[1])-Y(C[1])),vC=gU(X(B[0])-X(C[0]),Y(B[1])-Y(C[1])),ra=Math.min(15,0.4*Math.min(a,b)*u),bi=gU(uC[0]+vC[0],uC[1]+vC[1]);
+  s+='<path d="M'+X(C[0])+' '+Y(C[1])+' L'+(X(C[0])+ra*uC[0])+' '+(Y(C[1])+ra*uC[1])+' A'+ra+' '+ra+' 0 0 0 '+(X(C[0])+ra*vC[0])+' '+(Y(C[1])+ra*vC[1])+' Z" fill="#e9e9e9" stroke="#000" stroke-width="1.2"/><circle cx="'+(X(C[0])+ra*.45*bi[0])+'" cy="'+(Y(C[1])+ra*.45*bi[1])+'" r="2.3" fill="#000"/>';
+  const G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3],mid=(P,Q,t2)=>{const M=[(P[0]+Q[0])/2,(P[1]+Q[1])/2],d=gU(M[0]-G[0],M[1]-G[1]);return gT(X(M[0])-d[0]*12,Y(M[1])+d[1]*12,t2,{it:true,size:16});};
+  s+=mid(A,B,"c")+mid(B,C,"a")+mid(C,A,"b");
+  const lab=(P,t2)=>{const d=gU(P[0]-G[0],P[1]-G[1]);return gT(X(P[0])+14*d[0],Y(P[1])-14*d[1],t2,{bold:true,size:15});};
+  s+=lab(A,"A")+lab(B,"B")+lab(C,"C");
+  return s+'</svg>';
+}
+/* sdSvg(x,y,z): beliebiges Dreieck aus drei Seiten, längste Seite unten; größter Winkel mit Gradzahl im Bogen (bei 90° mit Punkt) */
+function sdSvg(x,y,z){
+  const L=[x,y,z].sort((p,q)=>p-q),[s1,s2,lg]=L;
+  if(!(s1>0)||s1+s2<=lg+1e-9)return '<p style="color:#C62828;font-weight:700">Mit diesen drei Seiten gibt es kein Dreieck.</p>';
+  const ax=(lg*lg+s1*s1-s2*s2)/(2*lg),ay=Math.sqrt(Math.max(0,s1*s1-ax*ax));
+  const W=340,H=230,pad=34,sc=Math.min((W-2*pad)/lg,(H-2*pad-10)/ay);
+  const A=[pad+(W-2*pad-lg*sc)/2,H-pad],B=[A[0]+lg*sc,H-pad],C=[A[0]+ax*sc,H-pad-ay*sc];
+  const gam=Math.acos(Math.max(-1,Math.min(1,(s1*s1+s2*s2-lg*lg)/(2*s1*s2))))*180/Math.PI,rund=Math.round(gam*10)/10,recht=Math.abs(rund-90)<0.05;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Dreieck aus drei Seiten" style="width:340px;max-width:100%;height:auto;font-family:Arial,sans-serif">';
+  const u=gU(A[0]-C[0],A[1]-C[1]),v=gU(B[0]-C[0],B[1]-C[1]),bi=gU(u[0]+v[0],u[1]+v[1]),lb=recht?"90°":gZ(rund)+"°";
+  const ra=Math.min(0.45*Math.min(s1,s2)*sc,46),tR=ra*0.62;
+  s+='<path d="M'+C[0].toFixed(1)+' '+C[1].toFixed(1)+' L'+(C[0]+ra*u[0]).toFixed(1)+' '+(C[1]+ra*u[1]).toFixed(1)+' A'+ra.toFixed(1)+' '+ra.toFixed(1)+' 0 0 0 '+(C[0]+ra*v[0]).toFixed(1)+' '+(C[1]+ra*v[1]).toFixed(1)+' Z" fill="'+(recht?"#E5F4E6":"#e9e9e9")+'" stroke="#000" stroke-width="1.3"/>';
+  if(recht)s+='<circle cx="'+(C[0]+8*bi[0]).toFixed(1)+'" cy="'+(C[1]+8*bi[1]).toFixed(1)+'" r="2.6" fill="#000"/>';
+  s+=gT(C[0]+(tR+6)*bi[0],C[1]+(tR+6)*bi[1],lb,{size:12,bold:true});
+  s+='<polygon points="'+[A,B,C].map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(" ")+'" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/>';
+  s+=gT((A[0]+B[0])/2,H-pad+16,gZ(lg,2)+" cm",{size:14});
+  s+=gT((A[0]+C[0])/2-22,(A[1]+C[1])/2-4,gZ(s1,2)+" cm",{size:14})+gT((B[0]+C[0])/2+22,(B[1]+C[1])/2-4,gZ(s2,2)+" cm",{size:14});
+  return s+'</svg><p class="summe">Größter Winkel: <b>'+lb+'</b> → '+(recht?'<b style="color:#2e7d32">rechtwinklig</b>':'<b>nicht rechtwinklig</b>')+'</p>';
+}
+/* gSvg(a,b): rechtwinkliges Dreieck im Kästchenraster (1 Kästchen = 1 cm²), gestricheltes Rechteck aus beiden Katheten */
+function gSvg(a,b,o){
+  o=o||{};const u=o.u||26,M=o.max||10,pad=30,W=M*u+2*pad,H=M*u+2*pad,X=x=>pad+x*u,Y=y=>H-pad-y*u;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Dreieck im Kästchenraster" style="width:'+(o.w||W)+'px;max-width:100%;height:auto;font-family:Arial,sans-serif">';
+  for(let i=0;i<=M;i++)s+='<line x1="'+X(i)+'" y1="'+Y(0)+'" x2="'+X(i)+'" y2="'+Y(M)+'" stroke="#c9d6e6" stroke-width="1"/><line x1="'+X(0)+'" y1="'+Y(i)+'" x2="'+X(M)+'" y2="'+Y(i)+'" stroke="#c9d6e6" stroke-width="1"/>';
+  s+='<rect x="'+X(0)+'" y="'+Y(b)+'" width="'+a*u+'" height="'+b*u+'" fill="#FFF3B0" fill-opacity=".55" stroke="#000" stroke-width="2" stroke-dasharray="7 5"/>';
+  s+='<polygon points="'+X(0)+','+Y(0)+' '+X(a)+','+Y(0)+' '+X(0)+','+Y(b)+'" fill="#9ED8BE" stroke="#000" stroke-width="3" stroke-linejoin="round"/>';
+  const ra=Math.min(18,0.45*Math.min(a,b)*u);
+  s+='<path d="M'+X(0)+' '+Y(0)+' L'+(X(0)+ra)+' '+Y(0)+' A'+ra+' '+ra+' 0 0 0 '+X(0)+' '+(Y(0)-ra)+' Z" fill="#e9e9e9" stroke="#000" stroke-width="1.2"/><circle cx="'+(X(0)+ra*.42)+'" cy="'+(Y(0)-ra*.42)+'" r="2.4" fill="#000"/>';
+  s+=gT(X(a/2),Y(0)+15,"a = "+gZ(a)+" cm",{size:15})+gT(X(0)+34,Y(b)-12,"b = "+gZ(b)+" cm",{size:15});
+  return s+'</svg>';
+}
+
+/* ================= Level 2: Rechtwinklige Dreiecke und Pythagoras ================= */
+const NAMEN=[["A","B","C"],["D","E","F"],["P","Q","R"],["R","S","T"],["X","Y","Z"],["K","L","M"],["U","V","W"],["E","F","G"]];
+const kl=s=>s.toLowerCase();
+const z2=(x,d)=>gZ(x,d==null?2:d);
+const sq=(a,b)=>[a,b].sort().join(" und ");
+const gl=(h,a,b)=>{const s=[a,b].sort();return `${h}² = ${s[0]}² + ${s[1]}²`;};
+function rtDaten(lv){
+  const e=lv===0?["A","B","C"]:pick(NAMEN), r=lv===0?pick([2,2,0,1]):rnd(0,2), rot=lv===0?pick([0,0,90,180,270]):rnd(0,11)*30+rnd(0,1)*15;
+  const L=[rnd(26,50)/10,rnd(26,50)/10];
+  return {e,r,rot,L,h:kl(e[r]),k1:kl(e[(r+1)%3]),k2:kl(e[(r+2)%3]),bild:o=>rtSvg(Object.assign({e,r,L,rot,w:300},o||{}))};
+}
+/* 2-1 Kathete, Hypotenuse, Pythagoras aufstellen */
+function g2a(lv){
+  const D=rtDaten(lv), alle=[D.h,D.k1,D.k2].sort(), ecke=D.e[D.r];
+  const art=lv===0?rnd(0,1):lv===1?rnd(0,2):rnd(2,5);
+  if(art===0)return mc("Welche Seite ist die Hypotenuse?",D.bild(),D.h,alle.filter(x=>x!==D.h),`Der rechte Winkel liegt bei ${ecke}. Die Seite gegenüber ist die Hypotenuse ${D.h}.`);
+  if(art===1)return mc("Welche Seiten sind die Katheten?",D.bild(),sq(D.k1,D.k2),[sq(D.h,D.k1),sq(D.h,D.k2)],`Die Katheten ${D.k1} und ${D.k2} schließen den rechten Winkel bei ${ecke} ein.`);
+  if(art===2){const a=mc("Welche Gleichung passt zu diesem Dreieck?",lv===2?null:D.bild(),gl(D.h,D.k1,D.k2),[gl(D.k1,D.h,D.k2),gl(D.k2,D.h,D.k1)],`Hypotenuse ${D.h} gegenüber dem rechten Winkel bei ${ecke}: ${gl(D.h,D.k1,D.k2)}`);
+    if(lv===2)a.q=`Im Dreieck ${D.e.join("")} liegt der rechte Winkel bei ${ecke}. Welche Gleichung stimmt?`;return a;}
+  if(art===3){const k=pick([D.k1,D.k2]),o=k===D.k1?D.k2:D.k1;
+    return mc(`Im Dreieck ${D.e.join("")} liegt der rechte Winkel bei ${ecke}. Welche Gleichung stimmt?`,null,`${k}² = ${D.h}² − ${o}²`,[`${k}² = ${o}² − ${D.h}²`,`${D.h}² = ${k}² − ${o}²`,`${k}² = ${D.h}² + ${o}²`],`${D.h} ist die Hypotenuse: ${gl(D.h,D.k1,D.k2)}, also ${k}² = ${D.h}² − ${o}²`);}
+  if(art===4){const f=pick([D.k1,D.k2]),o=f===D.k1?D.k2:D.k1;
+    return mc(`Lena schreibt zum Dreieck ${D.e.join("")} mit rechtem Winkel bei ${ecke}: ${gl(f,D.h,o)}. Was stimmt?`,null,`Falsch, richtig ist ${gl(D.h,D.k1,D.k2)}.`,["Das ist richtig.",`Falsch, richtig ist ${gl(o,D.h,f)}.`],`Die Hypotenuse liegt gegenüber dem rechten Winkel bei ${ecke}. Das ist ${D.h}.`);}
+  return mc(`Im Dreieck ${D.e.join("")} ist ${D.h} die Hypotenuse. Wo liegt der rechte Winkel?`,null,`bei ${ecke}`,D.e.filter(x=>x!==ecke).map(x=>"bei "+x),`Der rechte Winkel liegt gegenüber der Hypotenuse ${D.h}, also bei ${ecke}.`);
+}
+const TRIPEL=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[20,21,29],[12,16,20],[15,20,25],[10,24,26],[12,35,37],[9,40,41]];
+/* Seitenberechnung: g = gegebene Längen, gesucht Hypotenuse oder Kathete */
+function seiteAufgabe(D,a,b,c,gesucht,einh,dez,kg){
+  /* a,b Katheten (zu k1,k2), c Hypotenuse */
+  const nm={[D.k1]:a,[D.k2]:b,[D.h]:c},s={};
+  let q,num,ex,EXK;
+  const f=x=>z2(x,dez);
+  if(gesucht==="h"){s[D.k1]=f(a)+" "+einh;s[D.k2]=f(b)+" "+einh;s[D.h]="?";
+    num=+c.toFixed(dez);EXK=c;const ganz=Math.abs(c-num)<1e-9;
+    q=`Berechne die Hypotenuse ${D.h}.`+(ganz?"":" Runde sinnvoll.");
+    ex=`${D.h}² = ${f(a)}² + ${f(b)}² = ${z2(a*a,4)} + ${z2(b*b,4)} = ${z2(a*a+b*b,4)} → ${D.h} = √${z2(a*a+b*b,4)} ${ganz?"=":"≈"} ${f(num)} ${einh}`;}
+  else{const k=kg?D[kg]:(Math.random()<.5?D.k1:D.k2),o=k===D.k1?D.k2:D.k1,kv=nm[k],ov=nm[o];
+    s[o]=f(ov)+" "+einh;s[D.h]=f(c)+" "+einh;s[k]="?";num=+kv.toFixed(dez);EXK=kv;const ganz=Math.abs(kv-num)<1e-9;
+    q=`Berechne die Kathete ${k}.`+(ganz?"":" Runde sinnvoll.");
+    ex=`${k}² = ${f(c)}² − ${f(ov)}² = ${z2(c*c,4)} − ${z2(ov*ov,4)} = ${z2(c*c-ov*ov,4)} → ${k} = √${z2(c*c-ov*ov,4)} ${ganz?"=":"≈"} ${f(num)} ${einh}`;}
+  const mx=Math.max(a,b);return {q,svg:D.bild({s,L:[Math.max(b,.3*mx),Math.max(a,.3*mx)]}),num,unit:einh,st:dez,exakt:EXK,ex};
+}
+/* 2-2 Seiten berechnen und Rechtwinkligkeit prüfen */
+function g2b(lv){
+  const D=rtDaten(lv);
+  if(lv>=1&&Math.random()<.3){ /* Rechtwinkligkeit */
+    let s,recht=Math.random()<.5;
+    if(recht){const t=pick(TRIPEL),k=lv===2?pick([1,1,0.5,0.1]):1;s=t.map(x=>x*k);}
+    else{const t=pick(TRIPEL);s=[t[0],t[1],t[2]+pick([-1,1])];if(lv===2&&Math.random()<.5){do{s=[rnd(4,9),rnd(5,10),rnd(7,13)];}while(s[0]+s[1]<=s[2]+1);}
+      if(s[0]*s[0]+s[1]*s[1]===s[2]*s[2])s[2]++;}
+    const lg=Math.max(...s),kurz=s.slice().sort((x,y)=>x-y).slice(0,2),einh=s.some(x=>x<3)?"m":"cm";
+    const anz=lv===2?shuffle(s):s;const sum=kurz[0]**2+kurz[1]**2,r=Math.abs(sum-lg*lg)<1e-9;
+    return mc(`Ein Dreieck hat die Seiten ${anz.map(x=>z2(x)+" "+einh).join(", ")}. Ist es rechtwinklig?`,null,r?"Ja, es ist rechtwinklig.":"Nein, es ist nicht rechtwinklig.",[r?"Nein, es ist nicht rechtwinklig.":"Ja, es ist rechtwinklig."],
+      `${z2(kurz[0])}² + ${z2(kurz[1])}² = ${z2(sum,4)} und ${z2(lg)}² = ${z2(lg*lg,4)} → ${r?"gleich, also rechtwinklig":"ungleich, also nicht rechtwinklig"}.`);
+  }
+  if(lv===0){const t=pick(TRIPEL),sw=Math.random()<.5;return seiteAufgabe(D,sw?t[1]:t[0],sw?t[0]:t[1],t[2],Math.random()<.6?"h":"k","cm",0);}
+  if(lv===1){let a=rnd(2,15),b=rnd(2,15);if(Math.random()<.5){a=rnd(20,90)/10;}
+    const c=Math.hypot(a,b);if(Math.random()<.5)return seiteAufgabe(D,a,b,c,"h","cm",1);
+    const cc=Math.ceil(Math.max(a,b))+rnd(1,6),o=Math.random()<.5?a:b,k=Math.sqrt(cc*cc-o*o);
+    return o===a?seiteAufgabe(D,a,k,cc,"k","cm",1,"k2"):seiteAufgabe(D,k,b,cc,"k","cm",1,"k1");}
+  const km=Math.random()<.4,einh=km?"km":"m",dez=km?3:2;
+  const a=km?rnd(3,40)/10:rnd(12,95)/10,b=km?rnd(3,40)/10:rnd(12,95)/10,c=Math.hypot(a,b);
+  if(Math.random()<.5)return seiteAufgabe(D,a,b,c,"h",einh,dez);
+  const cc=Math.round((Math.max(a,b)+rnd(3,20)/10)*10)/10,o=a,k=Math.sqrt(cc*cc-o*o);
+  return seiteAufgabe(D,o,k,cc,"k",einh,dez,"k2");
+}
+/* 2-3 Flächeninhalt */
+function g2c(lv){
+  const D=rtDaten(lv);
+  if(lv===0){const a=rnd(2,12),b=rnd(2,12),s={[D.k1]:a+" cm",[D.k2]:b+" cm",[D.h]:""},mx=Math.max(a,b);
+    return{q:"Berechne den Flächeninhalt des Dreiecks.",svg:D.bild({s,L:[Math.max(b,.3*mx),Math.max(a,.3*mx)]}),num:a*b/2,unit:"cm²",ex:`Die Katheten sind Grundseite und Höhe: A = ${a} · ${b} ÷ 2 = ${gZ(a*b/2)} cm²`};}
+  if(lv===1||Math.random()<.4){const t=pick(TRIPEL),k=Math.random()<.5?D.k1:D.k2,o=k===D.k1?D.k2:D.k1,s={[o]:t[0]+" cm",[D.h]:t[2]+" cm",[k]:"?"},LL=k===D.k1?[t[0],t[1]]:[t[1],t[0]];
+    return{q:"Berechne den Flächeninhalt des Dreiecks.",svg:D.bild({s,L:LL}),num:t[0]*t[1]/2,unit:"cm²",
+      ex:`Erst die fehlende Kathete: ${k} = √(${t[2]}² − ${t[0]}²) = √${t[2]*t[2]-t[0]*t[0]} = ${t[1]} cm. Dann A = ${t[0]} · ${t[1]} ÷ 2 = ${gZ(t[0]*t[1]/2)} cm²`};}
+  if(Math.random()<.5){const t=pick(TRIPEL);
+    return mc(`Ein rechtwinkliges Dreieck hat die Kathete ${t[0]} cm und die Hypotenuse ${t[2]} cm. Wie berechnet man den Flächeninhalt richtig?`,null,
+      `erst die Kathete ${t[1]} cm, dann A = ${t[0]} · ${t[1]} ÷ 2`,[`A = ${t[0]} · ${t[2]} ÷ 2`,`A = ${t[0]} · ${t[2]}`,`erst die Kathete ${t[1]} cm, dann A = ${t[0]} · ${t[1]}`],
+      `Die Hypotenuse kommt nie in die Flächenformel. A = ${t[0]} · ${t[1]} ÷ 2 = ${gZ(t[0]*t[1]/2)} cm²`);}
+  const t=pick(TRIPEL),f=pick([0.1,0.5]),s={[D.k1]:z2(t[0]*f)+" m",[D.k2]:z2(t[1]*f)+" m",[D.h]:z2(t[2]*f)+" m"},A=Math.round(t[0]*t[1]*f*f/2*1e6)/1e6;
+  return{q:"Alle drei Seiten sind gegeben. Berechne den Flächeninhalt.",svg:D.bild({s,L:[t[1],t[0]]}),num:A,unit:"m²",
+    ex:`Nur die Katheten ${D.k1} und ${D.k2} kommen in die Formel: A = ${z2(t[0]*f)} · ${z2(t[1]*f)} ÷ 2 = ${z2(A,4)} m²`};
+}
+/* 2-4 Sachaufgaben (mit Antwortsatz) */
+function g2d(lv){
+  const sa=(q,num,unit,ex,dez,svg,exakt)=>({q,num,unit,st:dez,exakt:exakt==null?num:exakt,ex,satz:true,svg:svg||null});
+  const leicht=[
+    ()=>{const [d,h,l]=pick([[3,4,5],[1.5,2,2.5],[2.5,6,6.5],[0.9,1.2,1.5],[1.2,3.5,3.7]]);
+      return sa(`Eine ${z2(l)} m lange Leiter lehnt an einer Hauswand. Ihr Fuß steht ${z2(d)} m von der Wand entfernt. Wie hoch reicht die Leiter?`,h,"m",`h = √(${z2(l)}² − ${z2(d)}²) = √${z2(l*l-d*d,4)} = ${z2(h)} m`,2);},
+    ()=>{const [b,h,c]=pick([[30,40,50],[24,45,51],[60,80,100],[33,56,65]]);
+      return sa(`Mia lässt ihren Drachen steigen. Die Schnur ist ${c} m lang und straff gespannt. Der Punkt direkt unter dem Drachen ist ${b} m von Mia entfernt. Wie hoch fliegt der Drachen (ohne Mias Armhöhe)?`,h,"m",`h = √(${c}² − ${b}²) = √${c*c-b*b} = ${h} m`,0);},
+    ()=>{const [a,b,c]=pick([[9,12,15],[12,16,20],[15,20,25],[18,24,30]]);
+      return sa(`Ein Tablet-Bildschirm ist ${b} cm breit und ${a} cm hoch. Wie lang ist die Bildschirmdiagonale?`,c,"cm",`d = √(${b}² + ${a}²) = √${a*a+b*b} = ${c} cm`,0);}];
+  const mittel=[
+    ()=>{const w=rnd(64,74)/10,h=rnd(140,165)/10,d=Math.round(Math.hypot(w,h)*10)/10;
+      return sa(`Das Display von Leons Handy ist ${z2(w)} cm breit und ${z2(h)} cm hoch. Wie lang ist die Bildschirmdiagonale?`,d,"cm",`d = √(${z2(w)}² + ${z2(h)}²) = √${z2(w*w+h*h,4)} ≈ ${z2(d)} cm`,1,null,Math.hypot(w,h));},
+    ()=>{const l=rnd(8,14)/2,dd=rnd(8,20)/10,h=Math.round(Math.sqrt(l*l-dd*dd)*100)/100;
+      return sa(`Eine ${z2(l)} m lange Leiter lehnt an einer Wand. Ihr Fuß steht ${z2(dd)} m von der Wand entfernt. Wie hoch reicht die Leiter?`,h,"m",`h = √(${z2(l)}² − ${z2(dd)}²) = √${z2(l*l-dd*dd,4)} ≈ ${z2(h)} m`,2,null,Math.sqrt(l*l-dd*dd));},
+    ()=>{const lang=rnd(30,42)/10,hoch=rnd(8,15)/10,g=Math.round(Math.sqrt(lang*lang-hoch*hoch)*100)/100;
+      return sa(`Die Fahrbahn einer Skaterampe ist ${z2(lang)} m lang. Die Rampe ist ${z2(hoch)} m hoch. Wie lang ist die Rampe am Boden?`,g,"m",`g = √(${z2(lang)}² − ${z2(hoch)}²) = √${z2(lang*lang-hoch*hoch,4)} ≈ ${z2(g)} m`,2,null,Math.sqrt(lang*lang-hoch*hoch));},
+    ()=>{const s=rnd(55,80),c=s+rnd(15,40),h=Math.round(Math.sqrt(c*c-s*s)*10)/10;
+      return sa(`Ein Drachen hängt an einer ${c} m langen, straffen Schnur. Der Punkt unter dem Drachen ist ${s} m von Ben entfernt. Wie hoch fliegt der Drachen (ohne Bens Armhöhe)?`,h,"m",`h = √(${c}² − ${s}²) = √${c*c-s*s} ≈ ${gZ(h)} m`,1,null,Math.sqrt(c*c-s*s));}];
+  const schwer=[
+    ()=>{const [a,b]=pick([[60,45],[80,60],[48,36],[70,40],[55,35]]),d=Math.hypot(a,b),sp=Math.round((a+b-d)*10)/10;
+      return sa(`Der Bolzplatz ist ${a} m lang und ${b} m breit. Tim läuft von einer Ecke quer über den Platz zur gegenüberliegenden Ecke statt außen herum. Wie viele Meter spart er?`,sp,"m",`Diagonale d = √(${a}² + ${b}²) ≈ ${gZ(d)} m. Außen herum: ${a} m + ${b} m = ${a+b} m. Ersparnis: ${a+b} m − ${gZ(d)} m ≈ ${gZ(sp)} m`,1,null,a+b-d);},
+    ()=>{const t=pick([[25,60,65],[40,42,58],[20,21,29],[30,40,50],[24,32,40]]),A=t[0]*t[1]/2;
+      return sa(`Eine LED-Dreiecksplatte ist ein rechtwinkliges Dreieck. Eine Kathete ist ${t[0]} cm lang, die Hypotenuse ${t[2]} cm. Wie groß ist die Leuchtfläche?`,A,"cm²",`Zweite Kathete: √(${t[2]}² − ${t[0]}²) = ${t[1]} cm. A = ${t[0]} · ${t[1]} ÷ 2 = ${gZ(A)} cm²`,0);},
+    ()=>{const [g,h,l]=pick([[3,1.6,3.4],[2.4,1,2.6],[4,3,5],[1.5,0.8,1.7]]),A=Math.round(g*h/2*100)/100;
+      return sa(`Die Seitenwand einer Skaterampe ist ein rechtwinkliges Dreieck. Die Fahrbahn ist ${z2(l)} m lang, die Rampe ist ${z2(h)} m hoch. Wie groß ist die Seitenwand?`,A,"m²",`Boden: √(${z2(l)}² − ${z2(h)}²) = ${z2(g)} m. A = ${z2(g)} · ${z2(h)} ÷ 2 = ${z2(A)} m²`,2);},
+    ()=>{const w=rnd(64,74)/10,d=rnd(155,175)/10,h=Math.round(Math.sqrt(d*d-w*w)*10)/10;
+      return sa(`Ein Handy hat eine Bildschirmdiagonale von ${z2(d)} cm. Der Bildschirm ist ${z2(w)} cm breit. Wie hoch ist er?`,h,"cm",`h = √(${z2(d)}² − ${z2(w)}²) = √${z2(d*d-w*w,4)} ≈ ${z2(h)} cm`,1,null,Math.sqrt(d*d-w*w));}];
+  return pick([leicht,mittel,schwer][lv])();
+}
+
+/* ================= Level 3: Sinus, Kosinus und Tangens ================= */
+const GRK={A:"α",B:"β",C:"γ",D:"δ",E:"ε",F:"φ",K:"κ",L:"λ",M:"μ",R:"ρ",S:"σ",T:"τ",X:"ξ",Y:"ψ",Z:"ζ"};
+const NAMEN3=[["A","B","C"],["D","E","F"],["K","L","M"],["R","S","T"],["X","Y","Z"]];   /* keine Dreiecke mit P (π) */
+const GR_=Math.PI/180;
+const rw=(x,st)=>Math.round(x*Math.pow(10,st)+1e-9)/Math.pow(10,st);
+const kz=x=>String(x).replace(".",",");
+const zz=(x,st)=>kz(rw(x,st).toFixed(st));
+const fair=(x,st)=>{const f=(x*Math.pow(10,st))%1;return Math.abs(f-0.5)>0.12;};      /* keine Werte knapp an der Rundungsgrenze */
+const FN={sin:Math.sin,cos:Math.cos,tan:Math.tan};
+/* Dreieck mit markiertem Winkel: lv0 ABC (rechter Winkel wechselnd), lv1 ABC mit rechtem Winkel bei C, lv2 andere Buchstaben, geneigt */
+function tri3(lv){
+  const e=lv<2?["A","B","C"]:pick(NAMEN3), r=lv===0?pick([2,2,0,1]):lv===1?2:rnd(0,2);
+  const n=(r+1)%3,p=(r+2)%3,w=lv===1?pick([0,0,1]):pick([n,p]),kipp=lv===2?rnd(4,16):0;
+  const h=e[r].toLowerCase(),gk=e[w].toLowerCase(),ak=e[w===n?p:n].toLowerCase(),g=GRK[e[w]];
+  const bild=(th,H,s,wt)=>{const gkL=H*Math.sin(th*GR_),akL=H*Math.cos(th*GR_);
+    return rtSvg({e,r,L:w===n?[akL,gkL]:[gkL,akL],kipp,w:320,s:s||{},wk:[{i:w,t:wt||g}]});};
+  return {e,r,w,h,gk,ak,g,bild};
+}
+const EINH3=lv=>lv<2?{u:"cm",st:1,g:()=>rnd(30,120)/10}:pick([{u:"cm",st:1,g:()=>rnd(30,150)/10},{u:"m",st:2,g:()=>rnd(120,950)/100},{u:"km",st:3,g:()=>rnd(500,4000)/1000}]);
+const aufg=(q,svg,x,st,unit,ex)=>({q,svg,num:rw(x,st),exakt:x,st,unit,frei:true,ex});
+/* Seite berechnen. nenner=false: gesuchte Seite im Zähler; true: im Nenner */
+function seite3(fn,lv,nenner){
+  const D=tri3(lv),U=EINH3(lv);let th,G,res,tries=0;
+  do{th=rnd(20,70);G=U.g();const f=FN[fn](th*GR_);res=nenner?G/f:G*f;tries++;}while(!fair(res,U.st)&&tries<200);
+  /* Rollen: [gegeben, gesucht] je Funktion */
+  const R={sin:[D.h,D.gk],cos:[D.h,D.ak],tan:[D.ak,D.gk]}[fn];      /* Zähler gesucht: [Nenner, Zähler] */
+  const geg=nenner?R[1]:R[0],ges=nenner?R[0]:R[1];
+  const s={};s[geg]=geg+" = "+kz(G)+" "+U.u;s[ges]=ges+" = ?";
+  const lang={sin:{[D.h]:1,[D.gk]:Math.sin(th*GR_)},cos:{[D.h]:1,[D.ak]:Math.cos(th*GR_)},tan:{[D.ak]:Math.cos(th*GR_),[D.gk]:Math.sin(th*GR_)}}[fn];
+  const H=nenner?G/lang[geg]:G/lang[geg];   /* Hypotenuse für die Zeichnung */
+  const zl=nenner?geg:ges,nl=nenner?ges:geg;
+  const ex=`${fn} ${th}° = ${zl} / ${nl}, also ${ges} = ${kz(G)} ${U.u} ${nenner?":":"·"} ${fn} ${th}° ≈ ${zz(res,U.st)} ${U.u}`;
+  return aufg(`Berechne ${ges}. Runde sinnvoll und schreibe die Einheit dazu.`,D.bild(th,H,s,th+"°"),res,U.st,U.u,ex);
+}
+/* Winkel berechnen */
+function winkel3(fn,lv){
+  const D=tri3(lv),U=EINH3(lv);let A,B,th,tries=0;
+  do{if(fn==="tan"){A=U.g();B=U.g();th=Math.atan(A/B)/GR_;}
+     else{B=U.g();A=rw(B*rnd(20,85)/100,U.st);th=(fn==="sin"?Math.asin(A/B):Math.acos(A/B))/GR_;}
+     tries++;}while((!fair(th,0)||th<12||th>78||A<=0)&&tries<300);
+  const zl={sin:D.gk,cos:D.ak,tan:D.gk}[fn],nl={sin:D.h,cos:D.h,tan:D.ak}[fn];
+  const s={};s[zl]=zl+" = "+kz(A)+" "+U.u;s[nl]=nl+" = "+kz(B)+" "+U.u;
+  const H=fn==="tan"?Math.hypot(A,B):B;
+  const ex=`${fn} ${D.g} = ${kz(A)} ${U.u} / ${kz(B)} ${U.u}, also ${D.g} = ${fn}⁻¹(${kz(A)}/${kz(B)}) ≈ ${Math.round(th)}°`;
+  return aufg(`Berechne den Winkel ${D.g}. Runde auf ganze Grad.`,D.bild(th,H,s,D.g+" = ?"),th,0,"°",ex);
+}
+/* Seiten benennen (Z1) */
+function namen3(lv,art){
+  const D=tri3(lv),th=rnd(28,62),opts=[D.h,D.gk,D.ak];
+  art=art||pick(["h","gk","ak"]);
+  const t={h:["die Hypotenuse",`Die Hypotenuse liegt gegenüber dem rechten Winkel: ${D.h}.`],gk:[`die Gegenkathete von ${D.g}`,`Die Gegenkathete liegt dem Winkel ${D.g} gegenüber: ${D.gk}.`],ak:[`die Ankathete von ${D.g}`,`Die Ankathete liegt am Winkel ${D.g} an (und ist keine Hypotenuse): ${D.ak}.`]}[art];
+  const a=mc(`Welche Seite ist ${t[0]}?`,D.bild(th,5),D[art],opts.filter(x=>x!==D[art]),t[1]);a.kat=art;return a;
+}
+/* Verhältnis aufstellen */
+function aufst3(fn,lv){
+  const D=tri3(lv),th=rnd(28,62),f=(z,n)=>`${fn} ${D.g} = ${z}/${n}`;
+  const rich={sin:[D.gk,D.h],cos:[D.ak,D.h],tan:[D.gk,D.ak]}[fn];
+  const alle=[[D.gk,D.h],[D.ak,D.h],[D.gk,D.ak],[D.ak,D.gk],[D.h,D.gk],[D.h,D.ak]].filter(p=>p[0]!==rich[0]||p[1]!==rich[1]);
+  const wort={sin:"Gegenkathete / Hypotenuse",cos:"Ankathete / Hypotenuse",tan:"Gegenkathete / Ankathete"}[fn];
+  return mc(`Wie lautet ${fn} ${D.g}?`,D.bild(th,5),f(rich[0],rich[1]),shuffle(alle).slice(0,3).map(p=>f(p[0],p[1])),`${fn} ${D.g} = ${wort} = ${rich[0]}/${rich[1]}`);
+}
+const MERK={sin:"Gegenkathete / Hypotenuse",cos:"Ankathete / Hypotenuse",tan:"Gegenkathete / Ankathete"};
+function formel3(fn){
+  const W=["Gegenkathete / Hypotenuse","Ankathete / Hypotenuse","Gegenkathete / Ankathete","Ankathete / Gegenkathete","Hypotenuse / Gegenkathete"];
+  return mc(`Wie lautet ${fn} α?`,null,`${fn} α = ${MERK[fn]}`,shuffle(W.filter(x=>x!==MERK[fn])).slice(0,3).map(x=>`${fn} α = ${x}`),`${fn} α = ${MERK[fn]}`);
+}
+/* Selbst wählen: Womit rechnest du? */
+function wahl3(fns,lv){
+  const D=tri3(lv),th=rnd(28,62),fn=pick(fns),art=rnd(0,2);
+  const P={sin:[D.gk,D.h],cos:[D.ak,D.h],tan:[D.gk,D.ak]}[fn];
+  let geg,ges;if(art===0){geg=[P[1],D.g];ges=P[0];}else if(art===1){geg=[P[0],D.g];ges=P[1];}else{geg=[P[0],P[1]];ges=D.g;}
+  const opts=fns.length===2?["sin","cos","tan"]:["sin","cos","tan","Satz des Pythagoras"];
+  const a=mc(`Gegeben: ${geg.join(" und ")}. Gesucht: ${ges}. Womit rechnest du?`,D.bild(th,5),fn,opts.filter(x=>x!==fn),
+    `${ges} und ${geg.filter(x=>x!==D.g).join(", ")} gehören zu ${fn} ${D.g} = ${MERK[fn]}.`);a.kat=fn;return a;
+}
+/* 3-1 Sinus (Z1 + Z2) */
+function g3a(lv){
+  if(lv===0)return Math.random()<.55?namen3(0):(Math.random()<.25?formel3("sin"):aufst3("sin",0));
+  if(lv===1){const z=Math.random();return z<.45?seite3("sin",1,false):z<.8?winkel3("sin",1):aufst3("sin",1);}
+  const z=Math.random();return z<.4?seite3("sin",2,true):z<.65?seite3("sin",2,false):z<.85?winkel3("sin",2):namen3(2);
+}
+/* 3-2 Kosinus (Z3) */
+function g3b(lv){
+  if(lv===0)return Math.random()<.35?namen3(0,"ak"):(Math.random()<.25?formel3("cos"):aufst3("cos",0));
+  if(lv===1){const z=Math.random();return z<.5?seite3("cos",1,false):winkel3("cos",1);}
+  const fn=pick(["sin","cos"]),z=Math.random();
+  return z<.3?wahl3(["sin","cos"],2):z<.55?seite3(fn,2,true):z<.8?seite3(fn,2,false):winkel3(fn,2);
+}
+/* 3-3 Tangens (Z4), dazu Steigung in Prozent */
+function steigung3(){
+  if(Math.random()<.65){let p,th;do{p=pick([5,6,8,10,12,15,18,20,25,30,35,40]);th=Math.atan(p/100)/GR_;}while(!fair(th,0));
+    return aufg(`Eine Straße hat ${p} % Steigung. Wie groß ist der Steigungswinkel? Runde auf ganze Grad.`,null,th,0,"°",`${p} % heißt: ${p} m Höhe auf 100 m waagerecht. tan α = ${p}/100 = ${kz(p/100)}, also α ≈ ${Math.round(th)}°`);}
+  let w,p;do{w=rnd(2,20);p=Math.tan(w*GR_)*100;}while(!fair(p,0));
+  return aufg(`Eine Straße steigt mit ${w}° an. Wie viel Prozent Steigung sind das? Runde auf ganze Prozent.`,null,p,0,"%",`tan ${w}° ≈ ${kz(rw(Math.tan(w*GR_),4))}, also etwa ${Math.round(p)} m Höhe auf 100 m waagerecht: ${Math.round(p)} %`);
+}
+function g3c(lv){
+  if(lv===0)return Math.random()<.2?formel3("tan"):Math.random()<.2?mc("Welche Seite kommt beim Tangens nicht vor?",null,"die Hypotenuse",["die Gegenkathete","die Ankathete","Alle Seiten kommen vor."],"tan α = Gegenkathete / Ankathete. Die Hypotenuse brauchst du nicht."):aufst3("tan",0);
+  if(lv===1){const z=Math.random();return z<.5?seite3("tan",1,false):winkel3("tan",1);}
+  const fn=pick(["sin","cos","tan"]),z=Math.random();
+  return z<.25?wahl3(["sin","cos","tan"],2):z<.4?steigung3():z<.6?seite3(fn,2,true):z<.8?seite3(fn,2,false):winkel3(fn,2);
+}
+/* 3-4 Sachaufgaben mit Antwortsatz */
+function g3d(lv){
+  const sa=(q,x,st,unit,ex)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true});
+  const W=(f)=>{let r;let k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex);};
+  const leicht=[
+    ()=>W(()=>{const L=pick([4,4.5,5,6,7]),d=rnd(10,25)/10,x=Math.acos(d/L)/GR_;
+      return{q:`Eine ${kz(L)} m lange Leiter lehnt an einer Wand. Ihr Fuß steht ${kz(d)} m von der Wand entfernt. Welchen Winkel bildet die Leiter mit dem Boden?`,x,st:0,u:"°",ex:`cos α = ${kz(d)} m / ${kz(L)} m, also α ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{const S=rnd(40,120),w=rnd(25,65),x=S*Math.sin(w*GR_);
+      return{q:`Mias Drachenschnur ist ${S} m lang und straff gespannt. Sie bildet mit dem Boden einen Winkel von ${w}°. Wie hoch fliegt der Drachen (ohne Armhöhe)?`,x,st:2,u:"m",ex:`sin ${w}° = h / ${S} m, also h = ${S} m · sin ${w}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const h=rnd(15,20),t=rnd(25,32),x=Math.atan(h/t)/GR_;
+      return{q:`Eine Treppenstufe ist ${h} cm hoch und ${t} cm tief. Wie groß ist der Steigungswinkel der Treppe?`,x,st:0,u:"°",ex:`tan α = ${h} cm / ${t} cm, also α ≈ ${Math.round(x)}°`};})];
+  const mittel=[
+    ()=>W(()=>{const b=rnd(64,75)/10,h=rnd(140,165)/10,x=Math.atan(h/b)/GR_;
+      return{q:`Ein Handy-Display ist ${kz(b)} cm breit und ${kz(h)} cm hoch. Wie groß ist der Winkel zwischen der Diagonale und der kurzen Seite?`,x,st:0,u:"°",ex:`tan α = ${kz(h)} cm / ${kz(b)} cm, also α ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{const hc=rnd(20,60),x=hc/100/0.06;
+      return{q:`Eine Rollstuhlrampe darf höchstens 6 % Steigung haben. Sie soll ${hc} cm Höhe überwinden. Wie lang muss sie waagerecht mindestens sein (in m)?`,x,st:2,u:"m",ex:`6 % heißt tan α = 0,06 = ${kz(hc/100)} m / x, also x = ${kz(hc/100)} m : 0,06 ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const H=rnd(6,15),S=rnd(5,20),x=Math.atan(H/S)/GR_;
+      return{q:`Die Turnhalle ist ${H} m hoch und wirft einen ${S} m langen Schatten. Unter welchem Winkel fallen die Sonnenstrahlen auf den Boden?`,x,st:0,u:"°",ex:`tan α = ${H} m / ${S} m, also α ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{const L=rnd(150,200)/100,w=rnd(20,40),x=L*Math.sin(w*GR_);
+      return{q:`Ein Solarmodul ist ${kz(L)} m lang und steht mit ${w}° Neigung auf einem Flachdach. Wie hoch liegt die hintere Kante?`,x,st:2,u:"m",ex:`sin ${w}° = h / ${kz(L)} m, also h = ${kz(L)} m · sin ${w}° ≈ ${zz(x,2)} m`};})];
+  const schwer=[
+    ()=>W(()=>{const B=rnd(8,14),w=rnd(30,50),x=B/2/Math.cos(w*GR_);
+      return{q:`Ein Satteldach ist ${B} m breit und hat ${w}° Dachneigung. Wie lang ist ein Sparren vom First bis zur Traufe (ohne Überstand)?`,x,st:2,u:"m",ex:`Die halbe Breite ${kz(B/2)} m ist die Ankathete: cos ${w}° = ${kz(B/2)} m / s, also s = ${kz(B/2)} m : cos ${w}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const A=rnd(20,60),w=rnd(25,55),au=rnd(150,180)/100,x=A*Math.tan(w*GR_)+au;
+      return{q:`Ben steht ${A} m von einem Turm entfernt und misst in ${kz(au)} m Augenhöhe den Höhenwinkel ${w}° zur Turmspitze. Wie hoch ist der Turm?`,x,st:2,u:"m",ex:`tan ${w}° = x / ${A} m, also x = ${A} m · tan ${w}° ≈ ${zz(A*Math.tan(w*GR_),2)} m. Dazu die Augenhöhe: ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const L=rnd(80,200),d=rnd(8,30),x=Math.asin(d/L)/GR_;
+      return{q:`Das gespannte Seil einer Zipline ist ${L} m lang. Start und Ziel liegen ${d} m übereinander. Unter welchem Winkel zum Boden fällt das Seil?`,x,st:0,u:"°",ex:`sin α = ${d} m / ${L} m, also α ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{const H=rnd(80,150)/100,w=rnd(20,35),x=H/Math.sin(w*GR_);
+      return{q:`Eine Skaterampe ist ${kz(H)} m hoch. Ihre Fahrbahn steigt mit ${w}° an. Wie lang ist die Fahrbahn?`,x,st:2,u:"m",ex:`sin ${w}° = ${kz(H)} m / f, also f = ${kz(H)} m : sin ${w}° ≈ ${zz(x,2)} m`};})];
+  return pick([leicht,mittel,schwer][lv])();
+}
+
+/* ================= Level 4: Sinussatz ================= */
+/* gdSvg: allgemeines Dreieck, erste Ecke links unten, gegen den Uhrzeigersinn; Winkelgröße im Bogen */
+function gdSvg(o){
+  const e=o.e||["A","B","C"],vn=o.vn||e,r=Math.PI/180,al=o.al,be=o.be,ga=180-al-be;
+  const b=Math.sin(be*r)/Math.sin(ga*r),raw=[[0,0],[1,0],[b*Math.cos(al*r),b*Math.sin(al*r)]];
+  const xs=raw.map(p=>p[0]),ys=raw.map(p=>p[1]),dx=Math.max(...xs)-Math.min(...xs),dy=Math.max(...ys)-Math.min(...ys);
+  const W=o.bw||400,pad=44,H=Math.round(Math.max(160,Math.min(250,2*pad+(W-2*pad)*dy/dx)));
+  const sc=Math.min((W-2*pad)/dx,(H-2*pad)/dy),ox=(W-sc*(Math.max(...xs)+Math.min(...xs)))/2,oy=(H+sc*(Math.max(...ys)+Math.min(...ys)))/2;
+  const P=raw.map(([x,y])=>[ox+sc*x,oy-sc*y]),G=[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3],ang=[al,be,ga];
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Dreieck" style="width:${o.w||W}px;max-width:100%;height:auto;font-family:Arial,sans-serif">`;
+  const wk=o.wk||{0:null,1:null,2:null};
+  for(const key of Object.keys(wk)){const i=+key,lab=wk[key]==null?(GRK[e[i]]||""):wk[key];
+    const oo=[0,1,2].filter(j=>j!==i).map(j=>P[j]);
+    const u=gU(oo[0][0]-P[i][0],oo[0][1]-P[i][1]),v=gU(oo[1][0]-P[i][0],oo[1][1]-P[i][1]);
+    const l1=Math.hypot(oo[0][0]-P[i][0],oo[0][1]-P[i][1]),l2=Math.hypot(oo[1][0]-P[i][0],oo[1][1]-P[i][1]);
+    const tw=0.6*15*Math.max(String(lab).length,1),half=ang[i]*r/2;
+    let tR=Math.max(15,(tw/2+4)/Math.sin(half));const rr=Math.min(0.45*Math.min(l1,l2),Math.max(30,tR+tw/2+7));if(tR+tw/2>rr)tR=rr+tw/2+4;
+    const cr=u[0]*v[1]-u[1]*v[0],bi=gU(u[0]+v[0],u[1]+v[1]);
+    s+=`<path d="M${P[i][0].toFixed(1)} ${P[i][1].toFixed(1)} L${(P[i][0]+rr*u[0]).toFixed(1)} ${(P[i][1]+rr*u[1]).toFixed(1)} A${rr.toFixed(1)} ${rr.toFixed(1)} 0 0 ${cr>0?1:0} ${(P[i][0]+rr*v[0]).toFixed(1)} ${(P[i][1]+rr*v[1]).toFixed(1)} Z" fill="#e9e9e9" stroke="#000" stroke-width="1.3"/>`;
+    if(lab!=="")s+=gT(P[i][0]+tR*bi[0],P[i][1]+tR*bi[1],lab,{bold:true,size:15});}
+  const lab=[];
+  for(let k=0;k<3;k++){const i=(k+1)%3,j=(k+2)%3,nm=e[k].toLowerCase(),A=P[i],B=P[j],M=[(A[0]+B[0])/2,(A[1]+B[1])/2],d=gU(B[0]-A[0],B[1]-A[1]);
+    let nn=[-d[1],d[0]];if((M[0]-G[0])*nn[0]+(M[1]-G[1])*nn[1]<0)nn=[-nn[0],-nn[1]];
+    s+=`<line x1="${A[0].toFixed(1)}" y1="${A[1].toFixed(1)}" x2="${B[0].toFixed(1)}" y2="${B[1].toFixed(1)}" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
+    const t=o.s&&o.s[nm]!=null?o.s[nm]:nm;if(t!==""){const off=13+Math.abs(nn[0])*t.length*4.4+Math.abs(nn[1])*6;
+      lab.push(gT(M[0]+off*nn[0],M[1]+off*nn[1],t,{it:t.length===1,size:16}));}}
+  s+=lab.join("");
+  for(let k=0;k<3;k++){const q=gU(P[k][0]-G[0],P[k][1]-G[1]),L=String(vn[k]).length;s+=gT(P[k][0]+(17+(L-1)*7)*q[0],P[k][1]+(17+(L>1?4:0))*q[1],vn[k],{bold:true,size:17});}
+  return s+"</svg>";
+}
+const FRb=(z,n)=>`<span class="fr"><span>${z}</span><span>${n}</span></span>`;
+const exH=a=>{a.exh=true;return a;};
+const NAMEN4=[["D","E","F"],["K","L","M"],["R","S","T"]];
+const sd=d=>Math.sin(d*GR_), asd=x=>Math.asin(x)/GR_;
+function dreiWinkel(min){let al,be;do{al=rnd(min||28,115);be=rnd(min||28,115);}while(al+be>152||180-al-be<(min||28));return[al,be,180-al-be];}
+/* 4-1 Sinussatz aufstellen: Gleichungen mit 2 Brüchen – alle richtigen auswählen (Mehrfachauswahl) */
+function g4a(lv){
+  const e=lv===0?["A","B","C"]:pick(NAMEN4),w=dreiWinkel(30),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
+  const S=i=>[k[i],"sin "+g[i]],Wn=i=>["sin "+g[i],k[i]];
+  const txt=q=>q[0].join("/")+"="+q[1].join("/");
+  const richtig=[],falsch=[];
+  for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(i!==j){richtig.push([S(i),S(j)]);if(lv>0)richtig.push([Wn(i),Wn(j)]);
+    falsch.push([[k[i],"sin "+g[j]],[k[j],"sin "+g[i]]]);           /* Winkel vertauscht */
+    const r=[0,1,2].find(x=>x!==i&&x!==j);
+    falsch.push([S(i),[k[j],"sin "+g[r]]]);                          /* zweiter Bruch kein Paar */
+    falsch.push([[k[i],"sin "+g[r]],S(j)]);
+    if(lv>0)falsch.push([S(i),Wn(j)]);                               /* Brüche verschieden herum */
+    if(lv>1)falsch.push([[k[i],k[j]],["sin "+g[i],"sin "+g[j]]]);}   /* Seiten durch Seiten */
+  const nR=lv===0?1:lv===1?rnd(1,2):rnd(1,3),nO=lv===0?4:lv===1?4:5;
+  const gew=[];const nimm=(L,n)=>{for(const q of shuffle(L)){if(n<=0)break;if(!gew.some(x=>txt(x.q)===txt(q))){gew.push({q,ok:L===richtig});n--;}}};
+  nimm(richtig,nR);nimm(falsch,nO-nR);
+  const opts=shuffle(gew);
+  const fr=b=>`<span class="mfr"><span>${b[0]}</span><span>${b[1]}</span></span>`;
+  const svg=lv<2?gdSvg({e,al:w[0],be:w[1],w:280}):null;
+  const q=(lv<2?"Welche Gleichungen sind richtig? ":`Dreieck ${e.join("")} (ohne Zeichnung): Welche Gleichungen sind richtig? `)+(lv===0?"Tippe an.":"Es können mehrere richtig sein. Tippe alle richtigen an.");
+  const ex=`In jedem Bruch muss ein Paar stehen: eine Seite und der Sinus des gegenüberliegenden Winkels (${k[0]} und ${g[0]}, ${k[1]} und ${g[1]}, ${k[2]} und ${g[2]}). Beide Brüche müssen gleich herum stehen.`;
+  return {q,svg,multi:{opts:opts.map(o=>fr(o.q[0])+" = "+fr(o.q[1])),ok:opts.map(o=>o.ok)},key:opts.map(o=>txt(o.q)).join("|"),kat:e.join("")+nR,ex};
+}
+/* 4-2 Seiten und Winkel berechnen */
+const EINH4=lv=>lv<2?{u:"cm",st:1,g:()=>rnd(30,120)/10}:pick([{u:"cm",st:1,g:()=>rnd(30,150)/10},{u:"m",st:2,g:()=>rnd(120,950)/100},{u:"km",st:3,g:()=>rnd(500,4000)/1000}]);
+function seite4(lv,mitGamma){
+  const e=lv<2?["A","B","C"]:pick(NAMEN4),U=EINH4(lv),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
+  let w,i,j,G,res,t=0;
+  do{w=dreiWinkel(25);i=rnd(0,2);j=pick([0,1,2].filter(x=>x!==i));G=U.g();res=G*sd(w[j])/sd(w[i]);t++;}while(!fair(res,U.st)&&t<300);
+  /* gegeben: Seite i mit Winkel i (Paar) – bei mitGamma fehlt Winkel i und muss über die Innenwinkelsumme bestimmt werden; gesucht: Seite j */
+  const rest=[0,1,2].find(x=>x!==i&&x!==j),wk={},s={};
+  s[k[i]]=k[i]+" = "+kz(G)+" "+U.u;s[k[j]]=k[j]+" = ?";s[k[rest]]="";
+  if(mitGamma){wk[j]=w[j]+"°";wk[rest]=w[rest]+"°";}else{wk[i]=w[i]+"°";wk[j]=w[j]+"°";}
+  const svg=gdSvg({e,al:w[0],be:w[1],s,wk,w:330});
+  const ex=(mitGamma?`${g[i]} = 180° − ${w[j]}° − ${w[rest]}° = ${w[i]}°. `:"")+`${FRb(k[j],'sin '+g[j])} = ${FRb(k[i],'sin '+g[i])} → ${k[j]} = ${kz(G)} · sin ${w[j]}° ÷ sin ${w[i]}° ≈ ${zz(res,U.st)} ${U.u}`;
+  return exH(aufg(`Berechne ${k[j]}. Runde sinnvoll und schreibe die Einheit dazu.`,svg,res,U.st,U.u,ex));
+}
+function winkel4(lv){
+  const e=lv<2?["A","B","C"]:pick(NAMEN4),U=EINH4(lv),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
+  let w,i,j,A,B,th,t=0;
+  /* Paar i vollständig (Seite A, Winkel w[i]); gesucht Winkel j gegenüber der kürzeren Seite B */
+  do{w=dreiWinkel(25);i=rnd(0,2);j=pick([0,1,2].filter(x=>x!==i));A=U.g();B=rw(A*sd(w[j])/sd(w[i]),U.st);
+     th=B<A?asd(B*sd(w[i])/A):NaN;t++;}while((!(B<A)||isNaN(th)||!fair(th,0)||w[j]>=w[i]||lv<2&&w[i]>100)&&t<500);
+  const rest=[0,1,2].find(x=>x!==i&&x!==j),s={},wk={};
+  s[k[i]]=k[i]+" = "+kz(A)+" "+U.u;s[k[j]]=k[j]+" = "+kz(B)+" "+U.u;s[k[rest]]="";wk[i]=w[i]+"°";wk[j]="?";
+  const svg=gdSvg({e,al:w[0],be:w[1],s,wk,w:330});
+  const ex=`${FRb('sin '+g[j],k[j])} = ${FRb('sin '+g[i],k[i])} → sin ${g[j]} = ${kz(B)} · sin ${w[i]}° ÷ ${kz(A)} ≈ ${kz(rw(Math.sin(th*GR_),4))} → ${g[j]} = sin⁻¹(…) ≈ ${Math.round(th)}°`;
+  return exH(aufg(`Berechne den Winkel ${g[j]}. Runde auf ganze Grad.`,svg,th,0,"°",ex));
+}
+function g4b(lv){
+  if(lv===0)return seite4(0,false);
+  if(lv===1)return pick([()=>seite4(1,true),()=>seite4(1,false),()=>winkel4(1)])();
+  return pick([()=>seite4(2,true),()=>winkel4(2),()=>winkel4(2)])();
+}
+/* 4-3 Sachaufgaben mit Antwortsatz */
+function g4c(lv){
+  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true},alt!=null?{alt:[rw(alt,st)]}:{});
+  const W=f=>{let r,k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex,r.alt);};
+  const leicht=[
+    ()=>W(()=>{const d=rnd(5,15)*10,al=rnd(40,75),be=rnd(40,75),ga=180-al-be,x=d*sd(be)/sd(ga);
+      return{q:`Ben und Lea stehen ${d} m auseinander und peilen eine Drohne an. Bei Ben misst der Winkel ${al}°, bei Lea ${be}°. Wie weit ist die Drohne von Ben entfernt?`,x,st:2,u:"m",
+        ex:`Winkel an der Drohne: 180° − ${al}° − ${be}° = ${ga}°. Abstand = ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const d=rnd(3,8)*10,al=rnd(55,80),be=rnd(45,75),ga=180-al-be,x=d*sd(be)/sd(ga);
+      return{q:`Mia und Tim stehen am Flussufer ${d} m auseinander. Am anderen Ufer steht ein Baum. Bei Mia misst der Winkel zwischen Ufer und Baum ${al}°, bei Tim ${be}°. Wie weit ist der Baum von Mia entfernt?`,x,st:2,u:"m",
+        ex:`Winkel am Baum: 180° − ${al}° − ${be}° = ${ga}°. Entfernung = ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const d=rnd(20,60)/10,al=rnd(40,80),be=rnd(40,80),ga=180-al-be,x=d*sd(be)/sd(ga);
+      return{q:`Zwei Handymasten stehen ${kz(d)} km auseinander. Lenas Handy wird geortet: Am ersten Mast misst der Winkel ${al}°, am zweiten ${be}°. Wie weit ist das Handy vom ersten Mast entfernt?`,x,st:3,u:"km",
+        ex:`Winkel am Handy: 180° − ${al}° − ${be}° = ${ga}°. Entfernung = ${kz(d)} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(x,3)} km`};})];
+  const mittel=[
+    ()=>W(()=>{const B=rnd(8,14),a1=rnd(30,40),a2=rnd(45,60),x=B*sd(a1)/sd(180-a1-a2);
+      return{q:`Ein Haus ist ${B} m breit. Die beiden Dachflächen sind verschieden steil: Die eine Seite hat ${a1}° Neigung, die andere ${a2}°. Wie lang ist die steilere Dachfläche (vom First bis zur Traufe)?`,x,st:2,u:"m",
+        ex:`Winkel am First: 180° − ${a1}° − ${a2}° = ${180-a1-a2}°. Die steilere Dachfläche liegt dem ${a1}°-Winkel gegenüber: ${B} · sin ${a1}° ÷ sin ${180-a1-a2}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const d=rnd(15,40)*10,al=rnd(35,70),be=rnd(60,100),ga=180-al-be,x=d*sd(al)/sd(ga);
+      return{q:`Bei einer Segelregatta liegen die Bojen A und B ${d} m auseinander. An Boje A misst man zur Boje C den Winkel ${al}°, an Boje B den Winkel ${be}°. Wie weit ist es von Boje B zur Boje C?`,x,st:2,u:"m",
+        ex:`Winkel an C: 180° − ${al}° − ${be}° = ${ga}°. BC = ${d} · sin ${al}° ÷ sin ${ga}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const L=rnd(70,120)/10,ga=rnd(60,110),Kk=rw(L*rnd(45,80)/100,1),x=asd(Kk*sd(ga)/L);
+      return{q:`Ein dreieckiges Beet im Schulgarten hat zwei Seiten von ${kz(L)} m und ${kz(Kk)} m. Der Winkel gegenüber der ${kz(L)}-m-Seite ist ${ga}° groß. Wie groß ist der Winkel gegenüber der ${kz(Kk)}-m-Seite?`,x,st:0,u:"°",
+        ex:`sin x = ${kz(Kk)} · sin ${ga}° ÷ ${kz(L)} ≈ ${kz(rw(Kk*sd(ga)/L,4))} → x = sin⁻¹(…) ≈ ${Math.round(x)}°`};})];
+  const schwer=[
+    ()=>W(()=>{const d=rnd(3,8)*10,w1=rnd(20,35),w2=w1+rnd(10,25),s=d*sd(w1)/sd(w2-w1),s2=rw(s,2),x=s*sd(w2);
+      return{q:`Jonas und Emma messen den Höhenwinkel zur Spitze eines Freefall-Towers. Jonas steht weiter weg und misst ${w1}°. Emma steht ${d} m näher am Turm und misst ${w2}°. Wie hoch ist der Turm (ohne Augenhöhe)?`,x,st:2,u:"m",alt:s2*sd(w2),
+        ex:`Dreieck Jonas–Emma–Spitze: Winkel an der Spitze ${w2}° − ${w1}° = ${w2-w1}°. Emma bis Spitze: ${d} · sin ${w1}° ÷ sin ${w2-w1}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${w2}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const d=rnd(4,10)*10,al=rnd(50,75),be=rnd(50,75),ga=180-al-be,s=d*sd(be)/sd(ga),s2=rw(s,2),x=s*sd(al);
+      return{q:`Mia und Tim stehen am Flussufer ${d} m auseinander. Ein Baum steht direkt am anderen Ufer. Bei Mia misst der Winkel zwischen Ufer und Baum ${al}°, bei Tim ${be}°. Wie breit ist der Fluss?`,x,st:2,u:"m",alt:s2*sd(al),
+        ex:`Mia bis Baum: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Breite = ${zz(s,2)} · sin ${al}° ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const d=rnd(5,15)*10,al=rnd(30,60),be=rnd(30,60),ga=180-al-be,s=d*sd(be)/sd(ga),s2=rw(s,2),x=s*sd(al);
+      return{q:`Ben und Lea stehen ${d} m auseinander, die Drohne fliegt zwischen ihnen. Ben sieht sie unter dem Höhenwinkel ${al}°, Lea unter ${be}°. Wie hoch fliegt die Drohne (ohne Augenhöhe)?`,x,st:2,u:"m",alt:s2*sd(al),
+        ex:`Ben bis Drohne: ${d} · sin ${be}° ÷ sin ${ga}° ≈ ${zz(s,2)} m. Höhe = ${zz(s,2)} · sin ${al}° ≈ ${zz(x,2)} m`};})];
+  return pick([leicht,mittel,schwer][lv])();
+}
+/* 4-4 Flächeninhalt */
+function g4d(lv){
+  if(lv<2){const e=lv===0?["A","B","C"]:pick(NAMEN4),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),U=lv===0?{u:"cm",st:1}:pick([{u:"cm",st:1},{u:"m",st:2}]);
+    let w,i,s1,s2,A,t=0;
+    do{w=dreiWinkel(25);if(lv===0&&Math.random()<.3){const x=rnd(30,60);w=[90,x,90-x];w=shuffle(w);}i=rnd(0,2);
+      s1=U.u==="cm"?rnd(20,120)/10:rnd(120,900)/100;const j1=(i+1)%3,j2=(i+2)%3;s2=rw(s1*sd(w[j2])/sd(w[j1]),U.st);A=s1*s2*sd(w[i])/2;t++;}while((!fair(A,2)||s2<0.5)&&t<300);
+    const j1=(i+1)%3,j2=(i+2)%3,s={},wk={};s[k[j1]]=k[j1]+" = "+kz(s1)+" "+U.u;s[k[j2]]=k[j2]+" = "+kz(s2)+" "+U.u;s[k[i]]="";wk[i]=w[i]+"°";
+    const svg=gdSvg({e,al:w[0],be:w[1],s,wk,w:330});
+    return exH(aufg("Berechne den Flächeninhalt. Runde auf zwei Nachkommastellen und schreibe die Einheit dazu.",svg,A,2,U.u+"²",
+      `Der Winkel ${g[i]} liegt zwischen ${k[j1]} und ${k[j2]}: A = ${FRb(1,2)} · ${kz(s1)} · ${kz(s2)} · sin ${w[i]}° ≈ ${zz(A,2)} ${U.u}²`));}
+  /* ★★★: erst fehlende Seite (Innenwinkelsumme + Sinussatz), dann Fläche */
+  const e=pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
+  let w,i,j,G,b,b2,A,A2,t=0;
+  do{w=dreiWinkel(30);i=rnd(0,2);j=pick([0,1,2].filter(x=>x!==i));G=rnd(40,110)/10;b=G*sd(w[j])/sd(w[i]);b2=rw(b,1);
+    const r=[0,1,2].find(x=>x!==i&&x!==j);A=G*b*sd(w[r])/2;A2=G*b2*sd(w[r])/2;t++;}while((!fair(A,2)||!fair(A2,2)||!fair(b,1))&&t<300);
+  const r=[0,1,2].find(x=>x!==i&&x!==j),s={},wk={};s[k[i]]=k[i]+" = "+kz(G)+" cm";s[k[j]]="";s[k[r]]="";wk[i]=w[i]+"°";wk[j]=w[j]+"°";
+  const svg=gdSvg({e,al:w[0],be:w[1],s,wk,w:330});
+  const a=aufg("Berechne den Flächeninhalt. Runde auf zwei Nachkommastellen und schreibe die Einheit dazu.",svg,A2,2,"cm²",
+    `${g[r]} = 180° − ${w[i]}° − ${w[j]}° = ${w[r]}°. ${k[j]} = ${kz(G)} · sin ${w[j]}° ÷ sin ${w[i]}° ≈ ${kz(b2)} cm. A = ${FRb(1,2)} · ${kz(G)} · ${kz(b2)} · sin ${w[r]}° ≈ ${zz(A2,2)} cm² (mit dem genauen Wert ${zz(A,2)} cm², beides richtig)`);
+  a.alt=[rw(A,2)];return exH(a);
+}
+
+
+/* ================= Level 5: Kosinussatz ================= */
+const cd=d=>Math.cos(d*GR_), acd=x=>Math.acos(Math.max(-1,Math.min(1,x)))/GR_;
+/* Winkel aus drei Seiten (Index wie Ecken) */
+const winkelAus=L=>[0,1,2].map(i=>{const j=(i+1)%3,l=(i+2)%3;return acd((L[j]*L[j]+L[l]*L[l]-L[i]*L[i])/(2*L[j]*L[l]));});
+const ks=(k,g,i,o1,o2,sign,mitte,wkl)=>`${k[i]}² = ${k[o1]}² + ${k[o2]}² ${sign||"−"} 2 · ${(mitte||[k[o1],k[o2]]).join(" · ")} · cos ${wkl||g[i]}`;
+const andere=i=>[0,1,2].filter(x=>x!==i);
+/* 5-1 Kosinussatz aufstellen: abwechselnd Mehrfachauswahl und selbst bauen */
+function ks5multi(lv){
+  const e=lv===0?["A","B","C"]:pick(NAMEN4),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),w=dreiWinkel(30);
+  const richtig=[],falsch=[];
+  for(let i=0;i<3;i++){const [j,l]=andere(i);
+    richtig.push(ks(k,g,i,j,l));if(lv>0)richtig.push(ks(k,g,i,l,j));
+    falsch.push(ks(k,g,i,j,l,"−",null,g[j]));falsch.push(ks(k,g,i,j,l,"−",null,g[l]));
+    falsch.push(`${k[i]}² = ${k[j]}² + ${k[l]}²`);
+    falsch.push(ks(k,g,i,j,l,"−",[k[i],k[l]]));
+    if(lv>0)falsch.push(ks(k,g,i,j,l,"+"));
+    if(lv>1)falsch.push(`${k[i]}² = ${k[i]}² + ${k[j]}² − 2 · ${k[i]} · ${k[j]} · cos ${g[i]}`);}
+  const nR=lv===0?1:lv===1?rnd(1,2):rnd(1,3),nO=lv<2?4:5;
+  const gew=[];const nimm=(L,n,ok)=>{for(const q of shuffle(L)){if(n<=0)break;if(!gew.some(x=>x.q===q)){gew.push({q,ok});n--;}}};
+  nimm(richtig,nR,true);nimm(falsch,nO-nR,false);
+  const opts=shuffle(gew),svg=lv<2?gdSvg({e,al:w[0],be:w[1],w:280}):null;
+  const q=(lv<2?"Welche Gleichungen sind richtig? ":`Dreieck ${e.join("")} (ohne Zeichnung): Welche Gleichungen sind richtig? `)+(lv===0?"Tippe an.":"Es können mehrere richtig sein. Tippe alle richtigen an.");
+  const ex=`Links steht eine Seite zum Quadrat. Rechts stehen die beiden anderen Seiten und der Kosinus des Winkels zwischen ihnen – das ist der Winkel gegenüber der linken Seite (${k[0]} und ${g[0]}, ${k[1]} und ${g[1]}, ${k[2]} und ${g[2]}). Vor „2 ·“ steht immer ein Minus.`;
+  return {q,svg,multi:{opts:opts.map(o=>esc(o.q)),ok:opts.map(o=>o.ok)},kat:"m"+e.join("")+nR,ex};
+}
+function ks5bau(lv){
+  const e=lv===0?["A","B","C"]:pick(NAMEN4),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),w=dreiWinkel(30),i=rnd(0,2),[j,l]=andere(i);
+  const svg=lv<2?gdSvg({e,al:w[0],be:w[1],w:280}):null;
+  const q=(lv<2?"":`Dreieck ${e.join("")} (ohne Zeichnung): `)+`Stelle den Kosinussatz für die Seite ${k[i]} auf. Tippe die Bausteine an.`;
+  return {q,svg,kbau:{k,g,i},kat:"b"+e.join("")+i,key:"bau"+e.join("")+i+(lv<2?w.join(","):""),ex:`${ks(k,g,i,j,l)}. Der Winkel ${g[i]} liegt zwischen ${k[j]} und ${k[l]} und gegenüber von ${k[i]}.`};
+}
+function g5a(lv,n){return (n||0)%2===0?ks5multi(lv):ks5bau(lv);}
+function pruefeKbau(a,sl){const {k,g,i}=a.kbau,[j,l]=andere(i),set=(x,y)=>[x,y].sort().join()===[k[j],k[l]].sort().join();
+  return sl[0]===k[i]&&set(sl[1],sl[2])&&set(sl[3],sl[4])&&sl[5]===g[i];}
+/* 5-2 Seiten berechnen */
+function seite5(lv){
+  const e=lv===0?["A","B","C"]:lv===1?pick(NAMEN4):pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),U=EINH4(lv);
+  let i,p,q,w,res,c2,t=0;
+  do{i=rnd(0,2);p=U.g();q=U.g();w=lv<2?rnd(25,85):(Math.random()<.7?rnd(95,150):rnd(25,85));c2=p*p+q*q-2*p*q*cd(w);res=Math.sqrt(c2);t++;}
+  while(!fair(res,U.st)&&t<300);
+  const [j,l]=andere(i),L=[];L[i]=res;L[j]=p;L[l]=q;const A=winkelAus(L),s={},wk={};
+  s[k[i]]=k[i]+" = ?";s[k[j]]=k[j]+" = "+kz(p)+" "+U.u;s[k[l]]=k[l]+" = "+kz(q)+" "+U.u;wk[i]=w+"°";
+  const svg=gdSvg({e,al:A[0],be:A[1],s,wk,w:330});
+  const a=aufg(`Berechne ${k[i]}. Runde sinnvoll und schreibe die Einheit dazu.`,svg,res,U.st,U.u,
+    `${k[i]}² = ${kz(p)}² + ${kz(q)}² − 2 · ${kz(p)} · ${kz(q)} · cos ${w}° ≈ ${zz(c2,2)} → ${k[i]} = √${zz(c2,2)} ≈ ${zz(res,U.st)} ${U.u}`+(w>90?` (cos ${w}° ist negativ, deshalb wird ${k[i]} besonders lang)`:""));
+  a.alt=[rw(Math.sqrt(rw(c2,2)),U.st)];a.kat=w>90?"stumpf":"spitz";return a;
+}
+/* 5-3 Winkel berechnen */
+function winkel5(lv){
+  const e=lv===0?["A","B","C"]:lv===1?pick(NAMEN4):pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]),U=EINH4(lv);
+  let i,p,q,r,th,t=0;
+  do{i=rnd(0,2);p=U.g();q=U.g();const w0=lv<2?rnd(25,85):(Math.random()<.6?rnd(95,150):rnd(25,85));
+     r=rw(Math.sqrt(p*p+q*q-2*p*q*cd(w0)),U.st);th=acd((p*p+q*q-r*r)/(2*p*q));t++;}
+  while((!fair(th,0)||Math.abs(th-90)<3||(lv<2&&th>88))&&t<400);
+  const [j,l]=andere(i),L=[];L[i]=r;L[j]=p;L[l]=q;const A=winkelAus(L),s={},wk={};
+  s[k[i]]=k[i]+" = "+kz(r)+" "+U.u;s[k[j]]=k[j]+" = "+kz(p)+" "+U.u;s[k[l]]=k[l]+" = "+kz(q)+" "+U.u;wk[i]="?";
+  const svg=gdSvg({e,al:A[0],be:A[1],s,wk,w:330}),cv=(p*p+q*q-r*r)/(2*p*q);
+  const a=aufg(`Berechne den Winkel ${g[i]}. Runde auf ganze Grad.`,svg,th,0,"°",
+    `cos ${g[i]} = (${kz(p)}² + ${kz(q)}² − ${kz(r)}²) ÷ (2 · ${kz(p)} · ${kz(q)}) ≈ ${kz(rw(cv,4))} → ${g[i]} = cos⁻¹(…) ≈ ${Math.round(th)}°`+(cv<0?" (cos negativ → stumpfer Winkel)":""));
+  a.kat=th>90?"stumpf":"spitz";return a;
+}
+function g5b(lv){return seite5(lv);}
+function g5c(lv){return winkel5(lv);}
+/* 5-4 Sachaufgaben (nur Kosinussatz; Handwerk und Bauwerke) */
+function g5d(lv){
+  const sa=(q,x,st,unit,ex,alt)=>Object.assign(aufg(q,null,x,st,unit,ex),{satz:true},alt!=null?{alt:[rw(alt,st)]}:{});
+  const W=f=>{let r,k=0;do{r=f();k++;}while(!fair(r.x,r.st)&&k<200);return sa(r.q,r.x,r.st,r.u,r.ex,r.alt);};
+  const seite=(p,q,w)=>Math.sqrt(p*p+q*q-2*p*q*cd(w));
+  const leicht=[
+    ()=>W(()=>{const p=rnd(35,50),q=rnd(30,45),w=rnd(70,140),x=seite(p,q,w);
+      return{q:`Du bestellst online eine Klemmlampe. Ihre Arme sind ${p} cm und ${q} cm lang, das Gelenk lässt sich bis ${w}° öffnen. Wie weit reicht die Lampe dann von der Klemme bis zum Lampenkopf?`,x,st:1,u:"cm",
+        ex:`Reichweite² = ${p}² + ${q}² − 2 · ${p} · ${q} · cos ${w}° → Reichweite ≈ ${zz(x,1)} cm`};}),
+    ()=>W(()=>{const L=rnd(150,220)/100,w=rnd(25,45),x=seite(L,L,w);
+      return{q:`Die beiden Holme einer Stehleiter sind je ${kz(L)} m lang. Oben sind sie im Winkel von ${w}° geöffnet. Wie weit stehen die Füße auseinander?`,x,st:2,u:"m",
+        ex:`Abstand² = ${kz(L)}² + ${kz(L)}² − 2 · ${kz(L)} · ${kz(L)} · cos ${w}° → Abstand ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const p=rnd(120,250)/100,q=rnd(120,250)/100,w=rnd(55,80),x=seite(p,q,w);
+      return{q:`Im Fachwerk eines alten Hauses treffen sich ein ${kz(p)} m und ein ${kz(q)} m langer Balken im Winkel von ${w}°. Eine Strebe verbindet ihre Enden. Wie lang ist die Strebe?`,x,st:2,u:"m",
+        ex:`Strebe² = ${kz(p)}² + ${kz(q)}² − 2 · ${kz(p)} · ${kz(q)} · cos ${w}° → Strebe ≈ ${zz(x,2)} m`};})];
+  const mittel=[
+    ()=>W(()=>{const s1=rnd(40,70)/10,s2=rnd(40,70)/10,w=rnd(80,120),x=seite(s1,s2,w);
+      return{q:`Die beiden Sparren eines Dachstuhls sind ${kz(s1)} m und ${kz(s2)} m lang. Am First bilden sie einen Winkel von ${w}°. Wie breit ist das Haus (ohne Dachüberstand)?`,x,st:2,u:"m",
+        ex:`Breite² = ${kz(s1)}² + ${kz(s2)}² − 2 · ${kz(s1)} · ${kz(s2)} · cos ${w}° → Breite ≈ ${zz(x,2)} m`};}),
+    ()=>W(()=>{const p=rnd(30,60)/10,q=rnd(40,80)/10,w=rnd(100,140),x=seite(p,q,w);
+      return{q:`In einer Metallbauwerkstatt werden für einen Kranarm zwei Stahlträger von ${kz(p)} m und ${kz(q)} m Länge im Winkel von ${w}° verschweißt. Eine Strebe verbindet ihre Enden. Wie lang ist die Strebe?`,x,st:2,u:"m",
+        ex:`Strebe² = ${kz(p)}² + ${kz(q)}² − 2 · ${kz(p)} · ${kz(q)} · cos ${w}° → Strebe ≈ ${zz(x,2)} m (cos ${w}° ist negativ)`};}),
+    ()=>W(()=>{const p=rnd(30,45),q=rnd(30,45),w=rnd(94,104),x=seite(p,q,w);
+      return{q:`Ein Tischler baut ein dreieckiges Eckregal für einen Altbau. Die Zimmerecke ist nicht rechtwinklig, sondern ${w}° groß. Die beiden Kanten an der Wand sind ${p} cm und ${q} cm lang. Wie lang ist die vordere Kante?`,x,st:1,u:"cm",
+        ex:`Die Ecke ist nicht 90°, also kein Pythagoras: Kante² = ${p}² + ${q}² − 2 · ${p} · ${q} · cos ${w}° → Kante ≈ ${zz(x,1)} cm`};})];
+  const BAU=["einer Moschee in Istanbul","einer Pagode in Kyoto","einer Kathedrale in Köln","eines Tempels in Angkor","einer Synagoge in Prag"];
+  const schwer=[
+    ()=>W(()=>{const s=rnd(45,70)/10,B=rw(s*rnd(120,170)/100,1),x=acd((2*s*s-B*B)/(2*s*s));
+      return{q:`Ein Satteldach hat zwei gleich lange Sparren von ${kz(s)} m. Das Haus ist ${kz(B)} m breit. Wie groß ist der Winkel am First?`,x,st:0,u:"°",
+        ex:`cos γ = (${kz(s)}² + ${kz(s)}² − ${kz(B)}²) ÷ (2 · ${kz(s)} · ${kz(s)}) ≈ ${kz(rw((2*s*s-B*B)/(2*s*s),4))} → γ ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{const d1=rnd(40,90),d2=rnd(40,90),b=rnd(30,60),x=acd((d1*d1+d2*d2-b*b)/(2*d1*d2));
+      return{q:`Lea fotografiert die Fassade ${pick(BAU)}. Sie steht ${d1} m von der linken und ${d2} m von der rechten Ecke entfernt. Die Fassade ist ${b} m breit. Unter welchem Blickwinkel sieht Lea die Fassade?`,x,st:0,u:"°",
+        ex:`cos φ = (${d1}² + ${d2}² − ${b}²) ÷ (2 · ${d1} · ${d2}) ≈ ${kz(rw((d1*d1+d2*d2-b*b)/(2*d1*d2),4))} → φ ≈ ${Math.round(x)}°`};}),
+    ()=>W(()=>{let p,q,r;do{p=rnd(20,40)/10;q=rnd(20,40)/10;r=rnd(30,60)/10;}while(r>=p+q-0.5||r<=Math.max(p,q));const x=acd((p*p+q*q-r*r)/(2*p*q));
+      return{q:`Ein Metallbauer schweißt ein Dreieck aus drei Stahlstäben: ${kz(p)} m, ${kz(q)} m und ${kz(r)} m. Wie groß ist der Winkel gegenüber dem längsten Stab?`,x,st:0,u:"°",
+        ex:`cos γ = (${kz(p)}² + ${kz(q)}² − ${kz(r)}²) ÷ (2 · ${kz(p)} · ${kz(q)}) ≈ ${kz(rw((p*p+q*q-r*r)/(2*p*q),4))} → γ ≈ ${Math.round(x)}°`};})];
+  return pick([leicht,mittel,schwer][lv])();
+}
+
+/* ================= Endgegner (Finale) ================= */
+const SAETZE=["Satz des Pythagoras","sin, cos oder tan","Sinussatz","Kosinussatz"];
+function satzFall(lv,typ){
+  const e=lv===0?["A","B","C"]:pick([["A","B","C"],...NAMEN4]),k=e.map(x=>x.toLowerCase()),g=e.map(x=>GRK[x]);
+  const L=()=>kz(rnd(30,120)/10)+" cm";
+  let al,be,s={},wk={},ans,beschr;
+  if(typ==="P"||typ==="T"){/* rechter Winkel bei der dritten Ecke */
+    al=rnd(30,60);be=90-al;wk[2]="90°";
+    if(typ==="P"){if(Math.random()<.5){s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]=k[2]+" = ?";}else{s[k[2]]=k[2]+" = "+L();s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = ?";}ans=SAETZE[0];
+      beschr="Rechtwinkliges Dreieck, zwei Seiten gegeben, die dritte Seite gesucht.";}
+    else{if(Math.random()<.5){s[k[2]]=k[2]+" = "+L();wk[0]=al+"°";s[k[0]]=k[0]+" = ?";s[k[1]]="";}else{s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]="";wk[0]="?";}ans=SAETZE[1];
+      beschr="Rechtwinkliges Dreieck, ein Winkel und eine Seite oder zwei Seiten und ein Winkel gesucht.";}}
+  else{const w=dreiWinkel(30);al=w[0];be=w[1];const i=rnd(0,2),[j,l]=andere(i);
+    if(typ==="S"){if(Math.random()<.5){wk[i]=w[i]+"°";wk[j]=w[j]+"°";s[k[i]]=k[i]+" = "+L();s[k[j]]=k[j]+" = ?";s[k[l]]="";}
+      else{wk[i]=w[i]+"°";s[k[i]]=k[i]+" = "+L();s[k[j]]=k[j]+" = "+L();wk[j]="?";s[k[l]]="";}ans=SAETZE[2];beschr="Ein Paar aus Seite und gegenüberliegendem Winkel ist bekannt.";}
+    else if(typ==="K1"){const ww=lv===2&&Math.random()<.6?pick([84,86,87,88,92,93,94,96]):w[i];wk[i]=ww+"°";s[k[j]]=k[j]+" = "+L();s[k[l]]=k[l]+" = "+L();s[k[i]]=k[i]+" = ?";ans=SAETZE[3];
+      beschr="Zwei Seiten und der Winkel dazwischen sind gegeben, die dritte Seite ist gesucht.";}
+    else{s[k[0]]=k[0]+" = "+L();s[k[1]]=k[1]+" = "+L();s[k[2]]=k[2]+" = "+L();wk[i]="?";ans=SAETZE[3];beschr="Alle drei Seiten sind gegeben, ein Winkel ist gesucht.";}}
+  return {svg:gdSvg({e,al,be,s,wk,w:300}),ans,beschr,recht:typ==="P"||typ==="T"};
+}
+function gE1(lv){
+  const typ=pick(lv===2?["P","T","S","K1","K1","K2"]:["P","T","S","K1","K2"]),F=satzFall(lv,typ);
+  if(lv>0&&Math.random()<.4){
+    const ja="Ja, das Dreieck ist rechtwinklig.",nein="Nein, das Dreieck ist nicht rechtwinklig.",immer="Ja, Pythagoras gilt in jedem Dreieck.";
+    const a=mc("Darfst du hier den Satz des Pythagoras verwenden?",F.svg,F.recht?ja:nein,[F.recht?nein:ja,immer],
+      F.recht?"Das Dreieck hat einen rechten Winkel. Nur dann gilt Pythagoras.":"Pythagoras gilt nur im rechtwinkligen Dreieck. Hier brauchst du den Kosinussatz oder den Sinussatz.");a.kat="py"+F.recht;return a;}
+  const a=mc("Gesucht ist das Stück mit dem Fragezeichen. Womit rechnest du am einfachsten?",F.svg,F.ans,SAETZE.filter(x=>x!==F.ans),
+    F.beschr+" → "+F.ans+".");a.kat=F.ans;return a;
+}
+function gE2(lv){const L=Math.min(2,lv+1);return pick([g2b,g3b,g3c,g4b,g4d,g5b,g5c])(L);}
+function gE3(lv){return pick([g2d,g3d,g4c,g5d,g5d])(lv);}
+const BOSSE=[{id:"m1",nr:"E-1",name:"Welcher Satz passt?",gen:gE1},{id:"m2",nr:"E-2",name:"Mischrechnen",gen:gE2,runde:7},{id:"m3",nr:"E-3",name:"Sachaufgaben",gen:gE3,runde:5}];
+function bossSpielOffen(sp){if(S.lehrer)return true;if(!bossOffen())return false;const i=BOSSE.findIndex(t=>t.id===sp.id);return i===0||stars(BOSSE[i-1].id)>=1;}
+
 
 /* ================= Ansichten ================= */
 const app=document.getElementById("app"), zahlEl=document.getElementById("zahl"), zaehler=document.getElementById("zaehler"), mzahl=document.getElementById("mzahl"), muenzer=document.getElementById("muenzer");
@@ -345,7 +1011,7 @@ const ruhig=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduc
 let lehrerMsg="";
 function home(){
   zahlEl.textContent=summe();mzahl.textContent=S.muenzen;
-  let h=`<p class="sub">Schaffe eine Runde mit ${RUNDE} Aufgaben und höchstens ${FEHLER_ERLAUBT} Fehlern, dann bekommst du einen Stern. Ist deine erste Antwort falsch, hast du noch einen zweiten Versuch. Jeder Stern macht das Spiel schwerer. Der erste Stern öffnet das nächste Spiel. Hast du schon drei Sterne, gibt es Bonussterne, und ${BONUS_PRO_MUENZE} Bonussterne werden zu einem Credit.</p><div class="levels">`;
+  let h=`<p class="sub">Schaffe eine Runde (meist ${RUNDE} Aufgaben, bei schweren Spielen 7 oder 5) mit höchstens ${FEHLER_ERLAUBT} Fehlern, dann bekommst du einen Stern. Ist deine erste Antwort falsch, hast du noch einen zweiten Versuch. Jeder Stern macht das Spiel schwerer. Der erste Stern öffnet das nächste Spiel. Hast du schon drei Sterne, gibt es Bonussterne, und ${BONUS_PRO_MUENZE} Bonussterne werden zu einem Credit.</p><div class="levels">`;
   for(const L of LEVELS){
     if(!L.spiele){h+=`<section class="lv zu"><div class="badge">🔒</div><div class="lvkopf"><div><div class="tag">LEVEL ${L.nr}</div><h2>${L.name}</h2></div><div class="klein">${L.info}</div></div></section>`;continue;}
     const n=L.spiele.length, max=n*3, hat=L.spiele.reduce((a,s)=>a+stars(s.id),0);
@@ -359,9 +1025,11 @@ function home(){
     h+=`</div></section>`;
   }
   const bo=bossOffen();
-  h+=`<section class="lv boss${bo?" aktiv":" zu"}"><div class="badge">${bo?"⚔":"🔒"}</div><div class="lvkopf"><div><div class="tag">FINALE</div><h2>Endgegner</h2><div class="klein">Aufgaben aus allen Leveln</div></div>
-    ${bo?`<div class="zahl">${STERN(true)} ${stars("m")} von 3 Sternen</div>`:`<div class="klein">erscheint, wenn jedes Spiel mindestens einen Stern hat</div>`}</div>
-    ${bo?`<div class="bossrow"><div class="sterne">${reihe(stars("m"))}</div>${(S.bonus.m||0)?`<span class="bonus">+${S.bonus.m} Bonus</span>`:""}<button class="btn gold" data-play="m">⚔ Kämpfen</button></div>`:""}</section></div>`;
+  h+=`<section class="lv boss${bo?" aktiv":" zu"}"><div class="badge">${bo?"⚔":"🔒"}</div><div class="lvkopf"><div><div class="tag">FINALE</div><h2>Endgegner</h2><div class="klein">Mischaufgaben aus allen Leveln</div></div>
+    ${bo?`<div class="zahl">${STERN(true)} ${BOSSE.reduce((x,t)=>x+stars(t.id),0)} von ${BOSSE.length*3} Sternen</div>`:`<div class="klein">erscheint, wenn jedes Spiel mindestens einen Stern hat</div>`}</div>
+    ${bo?`<div class="bahn">${BOSSE.map(s=>{const o=bossSpielOffen(s),st=stars(s.id),cls=!o?"zu":st>=1?"fertig":"jetzt";
+      return `<div class="node ${cls}"><button class="kreis" data-play="${s.id}" ${o?"":"disabled"} aria-label="${s.name}${o?"":" (gesperrt)"}">${o?s.nr:"🔒"}</button><b>${s.name}</b>
+      ${cls==="jetzt"?`<button class="btn gold" data-play="${s.id}">⚔ Kämpfen</button>`:`<div class="sterne">${reihe(st)}</div>`}${(S.bonus[s.id]||0)?`<span class="bonus" title="Bonussterne">+${S.bonus[s.id]} Bonus</span>`:""}</div>`;}).join("")}</div>`:""}</section></div>`;
   h+=`<details${lehrerMsg?" open":""}><summary>Für die Lehrkraft</summary><div class="lehrer">
     <input type="text" id="code" placeholder="Lehrer-Code" autocomplete="off" aria-label="Lehrer-Code">
     <button class="btn hell" id="codeBtn">Alle Spiele freischalten</button>
@@ -380,16 +1048,16 @@ function home(){
 }
 
 let R=null, letzte="";
-const schluessel=a=>a.q+"|"+(a.svg||"")+"|"+(a.opts?a.opts.slice().sort().join("/"):a.num);
+const schluessel=a=>a.q+"|"+(a.svg||"")+"|"+(a.opts?a.opts.slice().sort().join("/"):a.multi?a.multi.opts.slice().sort().join("/"):a.num);
 function start(id){
   zahlEl.textContent=summe();
-  const spiel=id==="m"?BOSS:ALLE.find(t=>t.id===id);
+  const spiel=ALLE.find(t=>t.id===id)||BOSSE.find(t=>t.id===id);
   const lv=Math.min(2,stars(id));
-  R={spiel,id,lv,i:0,res:[],aufgaben:[]};
+  R={spiel,id,lv,i:0,res:[],aufgaben:[],n:(spiel.runde||RUNDE)};
   const seen=new Set();let versuche=0,grenz=0;
   const kat=a=>a.kat||(a.opts?a.opts[a.ans]:a.q);
-  while(R.aufgaben.length<RUNDE){
-    const a=spiel.gen(lv), k=schluessel(a), n=R.aufgaben.length, vorher=n?schluessel(R.aufgaben[n-1]):letzte;
+  while(R.aufgaben.length<R.n){
+    const a=spiel.gen(lv,R.aufgaben.length), k=schluessel(a), n=R.aufgaben.length, vorher=n?schluessel(R.aufgaben[n-1]):letzte;
     versuche++;
     if(k===vorher)continue;                                   /* nie zweimal dieselbe Aufgabe hintereinander */
     if(versuche<2000){
@@ -400,21 +1068,50 @@ function start(id){
     if(a.grenz)grenz++;
     seen.add(k);R.aufgaben.push(a);
   }
-  letzte=schluessel(R.aufgaben[RUNDE-1]);
+  letzte=schluessel(R.aufgaben[R.n-1]);
   show();
 }
 const punkte=()=>`<div class="dots" aria-label="Fortschritt">${R.aufgaben.map((_,i)=>`<span class="dot ${R.res[i]===true?"ok":R.res[i]==="gelb"?"gelb":R.res[i]===false?"err":i===R.i?"now":""}"></span>`).join("")}</div>`;
 const fehlerAnzeige=()=>{const f=R.res.filter(x=>x===false).length;return `<span id="fehlz" class="fehlz${f>FEHLER_ERLAUBT?" zuviel":""}">Fehler: ${f} (erlaubt: ${FEHLER_ERLAUBT})</span>`;};
 function kopf(){
-  const name=R.id==="m"?"Endgegner":`Spiel ${R.spiel.nr} · ${R.spiel.name}`;
+  const name=R.id[0]==="m"?`Endgegner ${R.spiel.nr} · ${R.spiel.name}`:`Spiel ${R.spiel.nr} · ${R.spiel.name}`;
   return `<div class="bar"><span class="titel">${name}<small>Schwierigkeit ${"★".repeat(R.lv+1)}</small></span>${fehlerAnzeige()}<button class="btn hell" id="abbr">Zur Übersicht</button></div>${punkte()}`;
+}
+/* Bewertung: richtig ist nur das korrekt gerundete Ergebnis; richtig gerechnet, aber nicht gerundet → "rund" (gelber Hinweis); keine Toleranzen */
+function bewerteZahl(raw,a){
+  const m=String(raw).trim().replace(/\s+/g," ").match(/^([+-]?\d+(?:[.,]\d+)?)\s*(.*)$/);if(!m)return "falsch";
+  const v=parseFloat(m[1].replace(",",".")),d=(m[1].split(/[.,]/)[1]||"").length,u=m[2].trim().toLowerCase().replace(/^grad$/,"°").replace(/^([a-z]+)2$/,"$1²");
+  let ue="ok";
+  if(a.frei){const E=(a.unit==null?"°":a.unit).toLowerCase();
+    if(E==="°"||E==="")ue=(u===""||u===E)?"ok":"falsch";else ue=u===E?"ok":(u===""?"einheit":"falsch");}
+  if(ue==="falsch")return "falsch";
+  if(Math.abs(v-a.num)<1e-6||(a.alt||[]).some(x=>Math.abs(v-x)<1e-6))return ue;
+  if(a.exakt!=null&&a.st!=null&&d>a.st&&Math.abs(v-a.exakt)<=Math.pow(10,-d)*1.000001)return "rund";
+  return "falsch";
+}
+function bewerteSatz(st,a){
+  st=String(st).trim();if(st.split(/\s+/).length<3)return "falsch";
+  const E={"cm":/cm|zentimeter/i,"m":/(\d|\s)m(\b|$)|meter/i,"km":/km|kilometer/i,"cm²":/cm²|cm2|quadratzentimeter/i,"m²":/m²|m2|quadratmeter/i,"°":/°|grad/i,"%":/%|prozent/i}[a.unit==null?"°":a.unit];
+  let best="falsch";(st.match(/\d+(?:[.,]\d+)?/g)||[]).forEach(z=>{const s=bewerteZahl(z,{num:a.num,exakt:a.exakt,st:a.st,alt:a.alt});if(s==="ok")best="ok";else if(s==="rund"&&best==="falsch")best="rund";});
+  if(best==="ok"&&E&&!E.test(st))return "einheit";
+  return best;
 }
 function show(){
   const a=R.aufgaben[R.i];R.versuch=0;
   const T=x=>HTML?x:esc(x), EINH=a.unit!=null?a.unit:STD_EINHEIT;
   let h=kopf()+`<section class="card"><p class="frage">${T(a.q)}</p>${a.svg?`<div class="fig">${a.svg}</div>`:""}`;
   if(a.opts)h+=`<div class="opts">${a.opts.map((o,i)=>`<button data-o="${i}">${T(o)}</button>`).join("")}</div>`;
-  else h+=`<div class="num" id="numForm"><label for="ein">Antwort:</label><input type="text" id="ein" inputmode="decimal" autocomplete="off"> <span class="einheit">${EINH}</span><button class="btn" type="button" id="pruefBtn">Prüfen</button></div>`;
+  else if(a.multi)h+=`<div class="opts multi" id="multi">${a.multi.opts.map((o,i)=>`<button data-m="${i}">${o}</button>`).join("")}</div><div class="row"><button class="btn" type="button" id="pruefBtn">Prüfen</button></div>`;
+  else if(a.bau){const st=shuffle([...a.bau.seiten.map((x,i)=>({t:"s",i,x})),...a.bau.winkel.map((x,i)=>({t:"w",i,x:"sin "+x}))]);a._steine=st;
+    h+=`<div class="bau" id="bau"><div class="bruchreihe">${[0,1,2].map(j=>`<span class="bfr"><button class="slot" data-s="${2*j}" aria-label="Zähler ${j+1}"></button><span class="bstrich"></span><button class="slot" data-s="${2*j+1}" aria-label="Nenner ${j+1}"></button></span>`).join('<span class="gl">=</span>')}</div>
+      <div class="steine">${st.map((s,k)=>`<button data-st="${k}" class="${s.t==="s"?"seiteb":""}">${esc(s.x)}</button>`).join("")}</div>
+      <div class="row"><button class="btn hell" type="button" id="leeren" style="color:#1b2559;background:#eef0f7;box-shadow:0 5px 0 #b9c0dc">Leeren</button><button class="btn" type="button" id="pruefBtn">Prüfen</button></div></div>`;}
+  else if(a.kbau){const {k,g}=a.kbau;a._steine=[...k.map(x=>({t:"s",x})),...g.map(x=>({t:"w",x}))];
+    const SL=n=>`<button class="slot" data-s="${n}" aria-label="Feld ${n+1}"></button>`;
+    h+=`<div class="bau" id="kbau"><div class="kgl">${SL(0)}² = ${SL(1)}² + ${SL(2)}² − 2 · ${SL(3)} · ${SL(4)} · cos ${SL(5)}</div>
+      <div class="steine">${a._steine.map((s,n)=>`<button data-st="${n}" class="${s.t==="s"?"seiteb":""}">${esc(s.x)}</button>`).join("")}</div>
+      <div class="row"><button class="btn hell" type="button" id="leeren" style="color:#1b2559;background:#eef0f7;box-shadow:0 5px 0 #b9c0dc">Leeren</button><button class="btn" type="button" id="pruefBtn">Prüfen</button></div></div>`;}
+  else h+=`<div class="num" id="numForm"><label for="ein">Antwort:</label><input type="text" id="ein"${a.frei?' autocapitalize="off" spellcheck="false"':' inputmode="decimal"'} autocomplete="off">${a.frei?"":` <span class="einheit">${EINH}</span>`}${a.satz?"":'<button class="btn" type="button" id="pruefBtn">Prüfen</button>'}</div>`+(a.satz?`<div class="num satzz"><label for="satz">Antwortsatz:</label><input type="text" id="satz" autocomplete="off" spellcheck="false"><button class="btn" type="button" id="pruefBtn">Prüfen</button></div>`:"");
   h+=`<div id="fb"></div></section>`;
   app.innerHTML=h;
   document.getElementById("abbr").addEventListener("click",home);
@@ -424,23 +1121,61 @@ function show(){
     if(k!==a.ans&&R.versuch===0){R.versuch=1;b.classList.add("gelb");b.disabled=true;hinweis();return;}
     app.querySelectorAll("[data-o]").forEach(x=>{x.disabled=true;x.classList.remove("gelb");if(+x.dataset.o===a.ans)x.classList.add("richtig");});
     if(k!==a.ans)b.classList.add("falsch");feedback(k===a.ans,a);}));
+  else if(a.multi){const M=document.getElementById("multi"),bs=[...M.querySelectorAll("[data-m]")];
+    bs.forEach(b=>b.addEventListener("click",()=>{b.classList.toggle("an");bs.forEach(x=>x.classList.remove("gelb"));}));
+    document.getElementById("pruefBtn").addEventListener("click",()=>{
+      if(!bs.some(b=>b.classList.contains("an"))){document.getElementById("fb").innerHTML=`<div class="fb hinweis">Tippe mindestens eine Gleichung an.</div>`;return;}
+      const ok=bs.every((b,i)=>b.classList.contains("an")===a.multi.ok[i]);
+      if(!ok&&R.versuch===0){R.versuch=1;bs.filter(b=>b.classList.contains("an")).forEach(b=>b.classList.add("gelb"));hinweis();return;}
+      bs.forEach((b,i)=>{b.disabled=true;b.classList.remove("gelb");if(a.multi.ok[i])b.classList.add("richtig");else if(b.classList.contains("an"))b.classList.add("falsch");b.classList.remove("an");});
+      document.getElementById("pruefBtn").disabled=true;feedback(ok,a);});}
+  else if(a.bau){const sl=[null,null,null,null,null,null],B=document.getElementById("bau");
+    const zeig=()=>{B.classList.remove("gelb");B.querySelectorAll(".slot").forEach(s=>{const x=sl[+s.dataset.s];s.textContent=x?x.x:"";s.classList.toggle("voll",!!x);});
+      B.querySelectorAll("[data-st]").forEach(b=>{b.disabled=sl.includes(a._steine[+b.dataset.st]);});};
+    B.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const k=sl.indexOf(null);if(k<0)return;sl[k]=a._steine[+b.dataset.st];zeig();}));
+    B.querySelectorAll(".slot").forEach(s=>s.addEventListener("click",()=>{sl[+s.dataset.s]=null;zeig();}));
+    document.getElementById("leeren").addEventListener("click",()=>{sl.fill(null);zeig();});
+    document.getElementById("pruefBtn").addEventListener("click",()=>{
+      if(sl.includes(null)){document.getElementById("fb").innerHTML=`<div class="fb hinweis">Fülle zuerst alle sechs Felder.</div>`;return;}
+      const ok=pruefeBau(a,sl);
+      if(!ok&&R.versuch===0){R.versuch=1;B.classList.add("gelb");hinweis();return;}
+      B.querySelectorAll("button").forEach(x=>x.disabled=true);feedback(ok,a);});}
+  else if(a.kbau){const sl=[null,null,null,null,null,null],B=document.getElementById("kbau");
+    const zeig=()=>{B.classList.remove("gelb");B.querySelectorAll(".slot").forEach(s=>{const x=sl[+s.dataset.s];s.textContent=x||"";s.classList.toggle("voll",!!x);});};
+    B.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const st=a._steine[+b.dataset.st],frei=st.t==="w"?(sl[5]?-1:5):[0,1,2,3,4].find(n=>!sl[n]);if(frei==null||frei<0)return;sl[frei]=st.x;zeig();}));
+    B.querySelectorAll(".slot").forEach(s=>s.addEventListener("click",()=>{sl[+s.dataset.s]=null;zeig();}));
+    document.getElementById("leeren").addEventListener("click",()=>{sl.fill(null);zeig();});
+    document.getElementById("pruefBtn").addEventListener("click",()=>{
+      if(sl.includes(null)){document.getElementById("fb").innerHTML=`<div class="fb hinweis">Fülle zuerst alle sechs Felder.</div>`;return;}
+      const ok=pruefeKbau(a,sl);
+      if(!ok&&R.versuch===0){R.versuch=1;B.classList.add("gelb");hinweis();return;}
+      B.querySelectorAll("button").forEach(x=>x.disabled=true);feedback(ok,a);});}
   else{const inp=document.getElementById("ein");inp.focus();
-    inp.addEventListener("input",()=>inp.classList.remove("gelb"));
+    inp.addEventListener("input",()=>inp.classList.remove("gelb"));const si0=document.getElementById("satz");if(si0){si0.addEventListener("input",()=>si0.classList.remove("gelb"));si0.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();pruef();}});}
     const btnP=document.getElementById("pruefBtn");const pruef=()=>{
-      const v=parseFloat(inp.value.replace(/\s/g,"").replace(",",".").replace(/[%‰€°]/g,""));if(isNaN(v))return;
-      const ok=Math.abs(v-a.num)<1e-9;
-      if(!ok&&R.versuch===0){R.versuch=1;inp.classList.add("gelb");hinweis();inp.select();return;}
-      inp.classList.remove("gelb");inp.disabled=true;btnP.disabled=true;feedback(ok,a);};
+      if(!/\d/.test(inp.value))return;
+      const si=document.getElementById("satz");
+      const zst=bewerteZahl(inp.value,a), sst=a.satz?bewerteSatz(si.value,a):"ok";
+      /* Runden oder Einheit vergessen: gelber Hinweis, kein Fehler, kein Versuch verbraucht */
+      if(zst==="rund"||sst==="rund"){if(zst==="rund"){inp.classList.add("gelb");inp.select();}if(sst==="rund")si.classList.add("gelb");
+        document.getElementById("fb").innerHTML=`<div class="fb hinweis">Runde noch sinnvoll! <span>Richtig gerechnet – das ist kein Fehler. Runde dein Ergebnis und prüfe noch einmal.</span></div>`;return;}
+      if(zst==="einheit"||sst==="einheit"){if(zst==="einheit")inp.classList.add("gelb");if(sst==="einheit")si.classList.add("gelb");
+        document.getElementById("fb").innerHTML=`<div class="fb hinweis">Die Zahl stimmt! <span>Schreib noch die Einheit dazu – das ist kein Fehler.</span></div>`;return;}
+      const zok=zst==="ok",sok=sst==="ok";
+      const ok=zok&&sok;
+      if(!ok&&R.versuch===0){R.versuch=1;if(!zok){inp.classList.add("gelb");inp.select();}if(!sok)si.classList.add("gelb");hinweis();return;}
+      a._satzFehlt=zok&&!sok;
+      inp.classList.remove("gelb");inp.disabled=true;btnP.disabled=true;if(si){si.classList.remove("gelb");si.disabled=true;}feedback(ok,a);};
     btnP.addEventListener("click",pruef);inp.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();pruef();}});}
 }
-function feedback(ok,a){
+function feedback(ok,a){a.exh=a.exh||false;
   R.res[R.i]=ok?(R.versuch?"gelb":true):false;const EINH=a.unit!=null?a.unit:STD_EINHEIT;
-  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"err"}">${ok?(R.versuch?"Richtig – im zweiten Versuch!":"Richtig!"):"Leider falsch."+(a.num!=null?` Richtig ist ${dez(a.num)}${EINH?(EINH==="°"?"":" ")+EINH:""}.`:"")}<span class="ex">${HTML?a.ex:esc(a.ex)}</span></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="weiter">${R.i<RUNDE-1?"Weiter ▶":"Zum Ergebnis ▶"}</button></div>`;
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"err"}">${ok?(R.versuch?"Richtig – im zweiten Versuch!":"Richtig!"):"Leider falsch."+(a._satzFehlt?" Die Zahl stimmt, aber der Antwortsatz fehlt oder passt nicht (mindestens 3 Wörter, Ergebnis und Einheit).":"")+(a.num!=null?` Richtig ist ${dez(a.num)}${EINH?(EINH==="°"?"":" ")+EINH:""}.`:"")}<span class="ex">${(HTML||a.exh)?a.ex:esc(a.ex)}</span></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="weiter">${R.i<R.n-1?"Weiter ▶":"Zum Ergebnis ▶"}</button></div>`;
   app.querySelector(".dots").outerHTML=punkte();
   const fz=document.getElementById("fehlz");if(fz)fz.outerHTML=fehlerAnzeige();
   const w=document.getElementById("weiter");w.focus();
-  w.addEventListener("click",()=>{R.i++;R.i<RUNDE?show():ende();});
+  w.addEventListener("click",()=>{R.i++;R.i<R.n?show():ende();});
 }
 function geschafftText(){const f=R.res.filter(x=>x===false).length,z=R.res.filter(x=>x==="gelb").length;
   const zt=z?`${z} ${z===1?"Zweitversuch":"Zweitversuchen"}`:"";
@@ -448,16 +1183,16 @@ function geschafftText(){const f=R.res.filter(x=>x===false).length,z=R.res.filte
   if(!f)return `Geschafft ohne Fehler mit ${zt}!`;
   return `Geschafft mit ${f} ${f===1?"Fehler":"Fehlern"}${z?" und "+zt:""}!`;}
 function ende(){
-  const richtig=R.res.filter(x=>x).length, fehler=RUNDE-richtig, geschafft=fehler<=FEHLER_ERLAUBT;
-  const vorherOffen=ALLE.filter(offen).length, bossVorher=bossOffen(), alt=summe();
+  const richtig=R.res.filter(x=>x).length, fehler=R.n-richtig, geschafft=fehler<=FEHLER_ERLAUBT;
+  const vorherOffen=ALLE.filter(offen).length+BOSSE.filter(bossSpielOffen).length, bossVorher=bossOffen(), alt=summe();
   let neuStern=false,bonus=false,neueMuenze=false;
   if(geschafft&&stars(R.id)<3){S.stars[R.id]=stars(R.id)+1;neuStern=true;save();}
   else if(geschafft){S.bonus[R.id]=(S.bonus[R.id]||0)+1;S.topf++;bonus=true;
     if(S.topf>=BONUS_PRO_MUENZE){S.topf-=BONUS_PRO_MUENZE;S.muenzen++;neueMuenze=true;}save();}
-  const neuSpiel=ALLE.filter(offen).length>vorherOffen, neuBoss=!bossVorher&&bossOffen();
+  const neuSpiel=ALLE.filter(offen).length+BOSSE.filter(bossSpielOffen).length>vorherOffen, neuBoss=!bossVorher&&bossOffen();
   let txt;
   if(geschafft)txt=neuStern?(geschafftText()+" Du bekommst einen Stern."):(neueMuenze?"Bonusstern! Fünf Bonussterne sind voll: Du bekommst einen Credit!":"Bonusstern! Sammle weiter für den nächsten Credit.");
-  else txt=`${richtig} von ${RUNDE} richtig. Mit höchstens ${FEHLER_ERLAUBT} Fehlern bekommst du einen Stern. Versuch es gleich noch einmal!`;
+  else txt=`${richtig} von ${R.n} richtig. Mit höchstens ${FEHLER_ERLAUBT} Fehlern bekommst du einen Stern. Versuch es gleich noch einmal!`;
   const banner=neuBoss?`<div class="banner">⚔ Der Endgegner ist erschienen!</div>`:neuSpiel?`<div class="banner">🔓 Ein neues Spiel ist freigeschaltet!</div>`:"";
   const s=stars(R.id), zeigt=neuStern?s-1:s;
   app.innerHTML=kopf()+`<section class="card ende"><div class="gross" id="gross">${reihe(zeigt,STERN_KARTE)}</div><p class="frage">${txt}</p>${bonus?`<div class="topf" aria-label="Bonussterne bis zum nächsten Credit">${neueMuenze?"":Array.from({length:BONUS_PRO_MUENZE},(_,i)=>`<i class="${i<S.topf?"voll":""}"></i>`).join("")} <svg viewBox="0 0 300 300"><use href="#credit"/></svg></div>`:""}${banner}
@@ -501,5 +1236,6 @@ function sternFlug(fertig){
 home();
 })();
 </script>
+
 
 </body></html>
