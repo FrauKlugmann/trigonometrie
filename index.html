@@ -123,7 +123,7 @@ input[type=text]{font:inherit;border:2px solid var(--glasrand);background:rgba(0
 .fehlz{font-weight:700;font-size:.95rem;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 14px}
 .fehlz.zuviel{background:#ff6b6b;border-color:#ff6b6b;color:#fff}
 .num.satzz{margin-top:10px}.num.satzz input{flex:1;min-width:14em;width:auto}
-.card .fig svg{max-width:100%;height:auto}
+.card .fig svg{max-width:100%;max-height:42vh;height:auto}
 .opts.multi{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
 .opts.multi button{font-size:1.15rem;display:flex;align-items:center;justify-content:center;gap:.3em}
 .opts.multi button.an{background:#dfe5ff;border-color:#3b4fa8;box-shadow:0 4px 0 #3b4fa8}.opts.multi button.an.gelb{background:#FFF3B0;border-color:#C99700;color:#7a5a00;box-shadow:0 4px 0 #C99700}
@@ -224,18 +224,26 @@ const RANGE=["kleiner als 90°","genau 90°","zwischen 90° und 180°","genau 18
 /* ---------- Zeichnungen ---------- */
 function T(x,y,s,o={}){return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${o.size||17}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" fill="#111"${o.bold?' font-weight="700"':''}${o.it?' font-style="italic"':''}>${esc(s)}</text>`;}
 function angleSVG(deg,showVal){
-  const w=360,h=230, cx=deg<=180?150:180, cy=deg<=180?170:115, R=deg<=180?150:100;
+  /* Winkel wird in einem großen Feld gezeichnet, danach wird das Bild eng auf die Zeichnung zugeschnitten (kein leerer Rand) */
+  const cx=0, cy=0, R=deg<=180?150:100;
   const lab=deg+"°", tw=0.6*18*lab.length, half=Math.min(deg,180)*Math.PI/360;
   let tR=deg>=180?44:Math.max(38,(tw/2+5)/Math.sin(half)); const r=Math.min(R-12,Math.max(62,tR+tw/2+10)); if(tR+tw/2>r)tR=r+tw/2+6;
   const a=deg*Math.PI/180, ex=cx+r*Math.cos(a), ey=cy-r*Math.sin(a);
-  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Winkel">`;
+  /* Begrenzung: Scheitel, beide Schenkel, Bogen, Beschriftung */
+  const pk=[[cx,cy],[cx+R,cy]]; if(deg<360)pk.push([cx+R*Math.cos(a),cy-R*Math.sin(a)]);
+  for(let t=0;t<=Math.min(deg,360);t+=2){const b=t*Math.PI/180;pk.push([cx+r*Math.cos(b),cy-r*Math.sin(b)]);}
+  const m=deg>=360?Math.PI/4:a/2, lx=cx+tR*Math.cos(m), ly=cy-tR*Math.sin(m);
+  if(showVal){pk.push([lx-tw/2,ly-12],[lx+tw/2,ly+12]);}
+  const pad=12, x0=Math.min(...pk.map(q=>q[0]))-pad, x1=Math.max(...pk.map(q=>q[0]))+pad, y0=Math.min(...pk.map(q=>q[1]))-pad, y1=Math.max(...pk.map(q=>q[1]))+pad;
+  const w=x1-x0, h=y1-y0;
+  let s=`<svg viewBox="${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}" role="img" aria-label="Winkel" style="width:${Math.round(w*1.15)}px;max-width:100%;height:auto">`;
   s+= deg>=360?`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#e6e6e6" stroke="#111" stroke-width="1.5"/>`
      :`<path d="M${cx} ${cy} L${cx+r} ${cy} A${r} ${r} 0 ${deg>180?1:0} 0 ${ex.toFixed(1)} ${ey.toFixed(1)} Z" fill="#e6e6e6" stroke="#111" stroke-width="1.5"/>`;
   if(deg===90)s+=`<circle cx="${cx+12}" cy="${cy-12}" r="3.5" fill="#111"/>`;
   s+=`<line x1="${cx}" y1="${cy}" x2="${cx+R}" y2="${cy}" stroke="#111" stroke-width="4" stroke-linecap="round"/>`;
   if(deg<360)s+=`<line x1="${cx}" y1="${cy}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy-R*Math.sin(a)).toFixed(1)}" stroke="#111" stroke-width="4" stroke-linecap="round"/>`;
   s+=`<circle cx="${cx}" cy="${cy}" r="4" fill="#111"/>`;
-  if(showVal){const m=deg>=360?Math.PI/4:a/2;s+=T(cx+tR*Math.cos(m),cy-tR*Math.sin(m),lab,{bold:true,size:18});}
+  if(showVal)s+=T(lx,ly,lab,{bold:true,size:18});
   return s+"</svg>";
 }
 function triFromSides(a,b,c){const A=Math.acos((b*b+c*c-a*a)/(2*b*c));return[[0,0],[c,0],[b*Math.cos(A),b*Math.sin(A)]];}
@@ -257,7 +265,7 @@ function triSVG(pts,o={}){
   const sc=Math.min((w-2*pad)/(Math.max(...xs)-Math.min(...xs)),(h-2*pad)/(Math.max(...ys)-Math.min(...ys)));
   const ox=(w-sc*(Math.max(...xs)+Math.min(...xs)))/2, oy=(h+sc*(Math.max(...ys)+Math.min(...ys)))/2;
   const P=pts.map(([x,y])=>[ox+sc*x,oy-sc*y]), G=[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
-  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Dreieck">`;
+  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Dreieck" style="width:360px;max-width:100%;height:auto">`;
   const show=new Set(Object.keys(o.angles||{}).map(Number)); if(o.right!=null)show.add(o.right);
   for(const i of show){
     const oo=[0,1,2].filter(j=>j!==i).map(j=>P[j]);
@@ -294,10 +302,12 @@ function wertZuArt(k,near){
   if(k===0)return rnd(15,80); if(k===2)return rnd(100,170); return rnd(195,340);
 }
 function g1a(lv){
-  if(lv===0){const k=rnd(0,5),v=wertZuArt(k,false);
-    return mc("Welche Winkelart ist das?",angleSVG(v,true),KINDS[k],shuffle(KINDS.filter((_,i)=>i!==k)).slice(0,3),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);}
-  if(lv===1||Math.random()<.5){const k=pick([0,0,2,2,4,4,1,3,5]),nah=[0,2,4].includes(k)&&Math.random()<.35,v=wertZuArt(k,nah);
-    const a=mc(`Ein Winkel ist ${v}° groß. Welche Winkelart ist das?`,null,KINDS[k],KINDS.filter((_,i)=>i!==k),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);a.grenz=nah;return a;}
+  /* Winkelarten mit nur einer Größe (rechter, gestreckter, Vollwinkel) kommen seltener dran: je Runde höchstens einmal und nie direkt nacheinander (siehe start) */
+  const ARTEN=[0,0,0,2,2,2,4,4,4,1,3,5], fest=k=>k===1||k===3||k===5;
+  if(lv===0){const k=pick(ARTEN),v=wertZuArt(k,false);
+    const a=mc("Welche Winkelart ist das?",angleSVG(v,true),KINDS[k],shuffle(KINDS.filter((_,i)=>i!==k)).slice(0,3),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);a.fest=fest(k);a.kat=KINDS[k];return a;}
+  if(lv===1||Math.random()<.5){const k=pick(ARTEN),nah=!fest(k)&&Math.random()<.35,v=wertZuArt(k,nah);
+    const a=mc(`Ein Winkel ist ${v}° groß. Welche Winkelart ist das?`,null,KINDS[k],KINDS.filter((_,i)=>i!==k),`${v}° ist ${RANGE[k]}. Das ist ein ${KINDS[k]}.`);a.grenz=nah;a.fest=fest(k);a.kat=KINDS[k];return a;}
   const k=pick([0,2,4]),nah=Math.random()<.35,ziel=wertZuArt(k,nah);
   const andere=shuffle([0,1,2,3,4,5].filter(i=>i!==k)).slice(0,3).map(i=>wertZuArt(i,false)+"°");
   const a=mc(`Welcher Winkel ist ein ${KINDS[k]}?`,null,ziel+"°",andere,`${ziel}° ist ${RANGE[k]}.`);a.grenz=nah;a.kat=KINDS[k];return a;
@@ -1050,7 +1060,7 @@ function home(){
   window.scrollTo({top:0});
 }
 
-let R=null, letzte="";
+let R=null, letzte="", letzteFest=false;
 const schluessel=a=>a.q+"|"+(a.svg||"")+"|"+(a.opts?a.opts.slice().sort().join("/"):a.multi?a.multi.opts.slice().sort().join("/"):a.num);
 function start(id){
   zahlEl.textContent=summe();
@@ -1067,11 +1077,12 @@ function start(id){
       if(seen.has(k))continue;                                /* keine Wiederholung in der Runde */
       if(n>=2&&kat(R.aufgaben[n-1])===kat(a)&&kat(R.aufgaben[n-2])===kat(a))continue; /* höchstens 2x dieselbe Lösung hintereinander */
       if(a.grenz&&grenz>=2)continue;                          /* Grenzwerte (89°, 181° …) höchstens zweimal */
+      if(a.fest&&((n?R.aufgaben[n-1].fest:letzteFest)||R.aufgaben.some(b=>b.fest&&b.kat===a.kat)))continue; /* rechter/gestreckter/Vollwinkel: je einmal pro Runde, nie direkt nacheinander */
     }
     if(a.grenz)grenz++;
     seen.add(k);R.aufgaben.push(a);
   }
-  letzte=schluessel(R.aufgaben[R.n-1]);
+  letzte=schluessel(R.aufgaben[R.n-1]);letzteFest=!!R.aufgaben[R.n-1].fest;
   show();
 }
 const punkte=()=>`<div class="dots" aria-label="Fortschritt">${R.aufgaben.map((_,i)=>`<span class="dot ${R.res[i]===true?"ok":R.res[i]==="gelb"?"gelb":R.res[i]===false?"err":i===R.i?"now":""}"></span>`).join("")}</div>`;
@@ -1241,4 +1252,33 @@ home();
 </script>
 
 
+
+<!-- Mathe-Base: Zurück-Knopf zur Trainer-Klassenseite -->
+<style id="mb-zurueck-style">
+#mb-leiste{display:block;width:100%;box-sizing:border-box;padding:8px 10px 6px;margin:0;text-align:left;position:relative;z-index:50}
+#mb-zurueck{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(10,8,40,.9);color:#fff !important;border:1.5px solid rgba(94,228,255,.85);box-shadow:0 0 10px rgba(94,228,255,.45);font:700 14px/1 "Segoe UI",system-ui,-apple-system,sans-serif;text-decoration:none !important;letter-spacing:0;text-transform:none;cursor:pointer}
+#mb-zurueck:hover{background:rgba(30,30,90,.95)}
+#mb-zurueck:focus-visible{outline:3px solid #ffd166;outline-offset:3px}
+@media print{#mb-leiste{display:none}}
+</style>
+<script id="mb-zurueck-script">
+(function(){
+  var K='mbTrainerKlasse', ziel='https://frauklugmann.github.io/trainer/';
+  try{
+    var m=(document.referrer||'').match(/^https:\/\/frauklugmann\.github\.io\/trainer\/(klasse\d+|oberstufe)\/?/);
+    if(m){sessionStorage.setItem(K,'https://frauklugmann.github.io/trainer/'+m[1]+'/');}
+    var s=sessionStorage.getItem(K); if(s){ziel=s;}
+  }catch(e){}
+  function einbauen(){
+    if(document.getElementById('mb-leiste')) return;
+    var leiste=document.createElement('div'); leiste.id='mb-leiste';
+    var a=document.createElement('a'); a.id='mb-zurueck'; a.href=ziel;
+    a.setAttribute('aria-label','Zurück zur Trainer-Übersicht deiner Klasse');
+    a.textContent='← Zurück';
+    leiste.appendChild(a);
+    document.body.insertBefore(leiste, document.body.firstChild);
+  }
+  if(document.body){einbauen();}else{document.addEventListener('DOMContentLoaded',einbauen);}
+})();
+</script>
 </body></html>
